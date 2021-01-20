@@ -2,9 +2,9 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:project4_front_end/models/user.dart';
 import 'package:project4_front_end/pages/profile.dart';
+import 'package:project4_front_end/widgets/bottomNavbar.dart';
 import 'package:project4_front_end/widgets/navbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:project4_front_end/widgets/bottomNavbar.dart';
 
 class Login extends StatefulWidget {
   static const routeName = '/';
@@ -21,6 +21,14 @@ class _LoginState extends State {
   String _passwordError;
   User user;
   int userID;
+
+  int _selectedIndex = 0;
+
+  void _selectedTab(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   void initState() {
@@ -112,7 +120,7 @@ class _LoginState extends State {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavbar(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Container(
         height: 80.0,
         width: 80.0,
@@ -124,10 +132,19 @@ class _LoginState extends State {
               radius: 40.0,
               backgroundImage: AssetImage("assets/logo.png"),
             ),
+            elevation: 2.0,
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: CustomBottomAppBar(
+        onTabSelected: _selectedTab,
+        items: [
+          CustomAppBarItem(icon: Icons.home),
+          CustomAppBarItem(icon: Icons.graphic_eq),
+          CustomAppBarItem(icon: Icons.info),
+          CustomAppBarItem(icon: Icons.person),
+        ],
+      ),
     );
   }
 

@@ -31,6 +31,18 @@ class _ProfileState extends State {
   User user;
   int userID;
 
+  int _selectedIndex = 3;
+
+  void _selectedTab(int index) {
+    setState(() {
+      _selectedIndex = index;
+      if (_selectedIndex == 3) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, Profile.routeName, (_) => false);
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -52,7 +64,7 @@ class _ProfileState extends State {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: Navbar(tabName: 'Sign up'),
+      appBar: Navbar(tabName: 'Profile'),
       //drawer: MainDrawer(),
       body: new SingleChildScrollView(
         child: Column(
@@ -60,28 +72,10 @@ class _ProfileState extends State {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-              child: new Text(
-                'Welcome',
-                style: TextStyle(
-                    fontFamily: 'Poppins', color: Colors.grey, fontSize: 60),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 0, 50),
-              child: new Text(
-                'Sign up',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  color: Colors.grey,
-                  fontSize: 40,
-                ),
-              ),
-            ),
-            Padding(
               padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
               child: Column(
                 children: <Widget>[
+                  SizedBox(height: 80),
                   // Firstname
                   TextFormField(
                     controller: firstnameController,
@@ -224,26 +218,13 @@ class _ProfileState extends State {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              child: Text('Sign up',
+              child: Text('Edit',
                   style: TextStyle(fontSize: 22, color: Colors.white)),
             ),
-            FlatButton(
-              onPressed: () {
-                // Go to login in page
-                _back();
-              },
-              child: Text(
-                "Back",
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.black,
-                ),
-              ),
-            )
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavbar(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Container(
         height: 80.0,
         width: 80.0,
@@ -255,10 +236,19 @@ class _ProfileState extends State {
               radius: 40.0,
               backgroundImage: AssetImage("assets/logo.png"),
             ),
+            elevation: 2.0,
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: CustomBottomAppBar(
+        onTabSelected: _selectedTab,
+        items: [
+          CustomAppBarItem(icon: Icons.home),
+          CustomAppBarItem(icon: Icons.graphic_eq),
+          CustomAppBarItem(icon: Icons.info),
+          CustomAppBarItem(icon: Icons.person),
+        ],
+      ),
     );
   }
 
