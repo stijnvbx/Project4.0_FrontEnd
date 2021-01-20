@@ -7,14 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:project4_front_end/pages/login.dart';
 
-class Register extends StatefulWidget {
-  static const routeName = '/register';
+class Profile extends StatefulWidget {
+  static const routeName = '/profile';
 
   @override
-  State<StatefulWidget> createState() => _RegisterState();
+  State<StatefulWidget> createState() => _ProfileState();
 }
 
-class _RegisterState extends State {
+class _ProfileState extends State {
   TextEditingController firstnameController = TextEditingController();
   TextEditingController lastnameController = TextEditingController();
   TextEditingController emailController = TextEditingController();

@@ -1,7 +1,7 @@
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:project4_front_end/models/user.dart';
-import 'package:project4_front_end/pages/register.dart';
+import 'package:project4_front_end/pages/profile.dart';
 import 'package:project4_front_end/widgets/navbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:project4_front_end/widgets/bottomNavbar.dart';
@@ -95,7 +95,6 @@ class _LoginState extends State {
                 contentPadding: EdgeInsets.fromLTRB(30, 0, 30, 0),
               ),
             ),
-
             const SizedBox(height: 40),
             RaisedButton(
               onPressed: () {
@@ -109,20 +108,6 @@ class _LoginState extends State {
               ),
               child: const Text('Log in',
                   style: TextStyle(fontSize: 22, color: Colors.white)),
-            ),
-
-            FlatButton(
-              onPressed: () {
-                // Go to sign up page
-                _signup();
-              },
-              child: Text(
-                "Sign up",
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.black,
-                ),
-              ),
             ),
           ],
         ),
@@ -190,9 +175,5 @@ class _LoginState extends State {
         duration: Duration(seconds: 3),
       ).show(context);
     }
-  }
-
-  void _signup() {
-    Navigator.of(context).pushNamed(Register.routeName);
   }
 }
