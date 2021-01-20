@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project4_front_end/pages/login.dart';
-import 'package:project4_front_end/pages/register.dart';
+import 'package:project4_front_end/pages/profile.dart';
 
 void main() {
   //HttpOverrides.global = new MyHttpOverrides();
@@ -21,7 +21,7 @@ class MyFlutterVitoApp extends StatelessWidget {
       ),
       home: Login(),
       routes: {
-        Register.routeName: (_) => Register(),
+        Profile.routeName: (_) => Profile(),
       },
     );
   }

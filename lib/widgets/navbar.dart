@@ -29,10 +29,13 @@ class _NavbarState extends State<Navbar> {
             Navigator.pushNamedAndRemoveUntil(context, Login.routeName,
                 (_) => false); // Always go to login page
           },
-          child: Image.asset(
-            'assets/logo_vito.jpg',
-            fit: BoxFit.cover,
-            height: 45.0,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: Image.asset(
+              'assets/logo_vito.jpg',
+              height: 45.0,
+              fit: BoxFit.fill,
+            ),
           ),
         ),
       ]),
