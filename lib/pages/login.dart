@@ -1,7 +1,7 @@
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:project4_front_end/models/user.dart';
-import 'package:project4_front_end/pages/profile.dart';
+import 'package:project4_front_end/pages/home.dart';
 import 'package:project4_front_end/widgets/bottomNavbar.dart';
 import 'package:project4_front_end/widgets/navbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,10 +34,17 @@ class _LoginState extends State {
   void initState() {
     super.initState();
     //getData(null);
+    setSelectedIndex(0);
+  }
+
+  setSelectedIndex(int selectedIndex) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('selectedIndex', selectedIndex);
   }
 
   @override
   Widget build(BuildContext context) {
+    
     return new Scaffold(
       appBar: Navbar(tabName: 'Login'),
       //drawer: MainDrawer(),
@@ -138,12 +145,7 @@ class _LoginState extends State {
       ),
       bottomNavigationBar: CustomBottomAppBar(
         onTabSelected: _selectedTab,
-        items: [
-          CustomAppBarItem(icon: Icons.home),
-          CustomAppBarItem(icon: Icons.security),
-          CustomAppBarItem(icon: Icons.info),
-          CustomAppBarItem(icon: Icons.person),
-        ],
+        items: [],
       ),
     );
   }
@@ -186,6 +188,8 @@ class _LoginState extends State {
         }
       });*/
     } else {
+      Navigator.pushNamedAndRemoveUntil(
+            context, HomePage.routeName, (_) => false);
       Flushbar(
         title: "Log in failed",
         message: "Please fill in every field.",

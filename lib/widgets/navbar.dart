@@ -23,7 +23,11 @@ class _NavbarState extends State<Navbar> {
       centerTitle: false,
       title:
           new Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(widget.tabName.toString()),
+        Text(
+          widget.tabName.toString(),
+          style: TextStyle(
+              color: Color(0xFF320331)),
+        ),
         FlatButton(
           onPressed: null,
           child: ClipRRect(

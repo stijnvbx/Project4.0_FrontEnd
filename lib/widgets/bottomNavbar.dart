@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project4_front_end/pages/login.dart';
+import 'package:project4_front_end/pages/home.dart';
 import 'package:project4_front_end/pages/profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,7 +14,7 @@ class CustomBottomAppBar extends StatefulWidget {
   final List<CustomAppBarItem> items;
 
   CustomBottomAppBar({this.onTabSelected, this.items}) {
-    assert(this.items.length == 2 || this.items.length == 4);
+    assert(this.items.length == 0 || this.items.length == 2 || this.items.length == 4);
   }
 
   @override
@@ -38,7 +38,7 @@ class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
         setSelectedIndex(_selectedIndex);
         print("login");
         Navigator.pushNamedAndRemoveUntil(
-            context, Login.routeName, (_) => false);
+            context, HomePage.routeName, (_) => false);
       } else if (_selectedIndex == 1) {
         setSelectedIndex(_selectedIndex);
         print("graph");

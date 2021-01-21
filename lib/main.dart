@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:project4_front_end/pages/home.dart';
 import 'package:project4_front_end/pages/login.dart';
 import 'package:project4_front_end/pages/profile.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   //HttpOverrides.global = new MyHttpOverrides();
@@ -26,7 +26,6 @@ class MyFlutterVitoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     MaterialColor colorCustom = MaterialColor(0xFF81BB26, color);
-    setSelectedIndex(0);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'VITO',
@@ -37,12 +36,8 @@ class MyFlutterVitoApp extends StatelessWidget {
       home: Login(),
       routes: {
         Profile.routeName: (_) => Profile(),
+        HomePage.routeName: (_) => HomePage(),
       },
     );
-  }
-
-  setSelectedIndex(int selectedIndex) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt('selectedIndex', selectedIndex);
   }
 }
