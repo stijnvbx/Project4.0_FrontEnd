@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:project4_front_end/pages/login.dart';
+import 'package:project4_front_end/pages/profile.dart';
 
 class Navbar extends StatefulWidget implements PreferredSizeWidget {
   Navbar({Key key, this.tabName})
@@ -25,10 +25,7 @@ class _NavbarState extends State<Navbar> {
           new Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Text(widget.tabName.toString()),
         FlatButton(
-          onPressed: () {
-            Navigator.pushNamedAndRemoveUntil(context, Login.routeName,
-                (_) => false); // Always go to login page
-          },
+          onPressed: null,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: Image.asset(

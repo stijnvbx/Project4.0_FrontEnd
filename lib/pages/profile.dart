@@ -31,6 +31,18 @@ class _ProfileState extends State {
   User user;
   int userID;
 
+  int _selectedIndex = 3;
+
+  void _selectedTab(int index) {
+    setState(() {
+      _selectedIndex = index;
+      if (_selectedIndex == 3) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, Profile.routeName, (_) => false);
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -52,7 +64,7 @@ class _ProfileState extends State {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: Navbar(tabName: 'Sign up'),
+      appBar: Navbar(tabName: 'Profile'),
       //drawer: MainDrawer(),
       body: new SingleChildScrollView(
         child: Column(
@@ -60,28 +72,10 @@ class _ProfileState extends State {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-              child: new Text(
-                'Welcome',
-                style: TextStyle(
-                    fontFamily: 'Poppins', color: Colors.grey, fontSize: 60),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 0, 50),
-              child: new Text(
-                'Sign up',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  color: Colors.grey,
-                  fontSize: 40,
-                ),
-              ),
-            ),
-            Padding(
               padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
               child: Column(
                 children: <Widget>[
+                  SizedBox(height: 80),
                   // Firstname
                   TextFormField(
                     controller: firstnameController,
@@ -213,52 +207,62 @@ class _ProfileState extends State {
                 ],
               ),
             ),
-            SizedBox(height: 40),
-            RaisedButton(
-              onPressed: () {
-                // Authenticate the new user & create one
-                // _signup();
-              },
-              color: Theme.of(context).primaryColor,
-              padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Text('Sign up',
-                  style: TextStyle(fontSize: 22, color: Colors.white)),
-            ),
-            FlatButton(
-              onPressed: () {
-                // Go to login in page
-                _back();
-              },
-              child: Text(
-                "Back",
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.black,
+            SizedBox(height: 30),
+            ButtonBar(
+              buttonPadding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+              alignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                RaisedButton(
+                  child: Text('Log out',
+                      style: TextStyle(fontSize: 22, color: Colors.white)),
+                  color: Colors.red,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  onPressed: () {
+                    _showMyDialog();
+                  },
                 ),
-              ),
-            )
+                RaisedButton(
+                  child: Text('Save',
+                      style: TextStyle(fontSize: 22, color: Colors.white)),
+                  color: Theme.of(context).primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  onPressed: () {
+                    // _signup();
+                  },
+                ),
+              ],
+            ),
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavbar(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Container(
         height: 80.0,
         width: 80.0,
         child: FittedBox(
           child: FloatingActionButton(
-            backgroundColor: Colors.green,
             onPressed: null,
             child: CircleAvatar(
               radius: 40.0,
               backgroundImage: AssetImage("assets/logo.png"),
             ),
+            elevation: 2.0,
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: CustomBottomAppBar(
+        onTabSelected: _selectedTab,
+        items: [
+          CustomAppBarItem(icon: Icons.home),
+          CustomAppBarItem(icon: Icons.graphic_eq),
+          CustomAppBarItem(icon: Icons.info),
+          CustomAppBarItem(icon: Icons.person),
+        ],
+      ),
     );
   }
 
@@ -325,7 +329,40 @@ class _ProfileState extends State {
     });
   }
 
-  void _back() {
-    Navigator.pushNamedAndRemoveUntil(context, Login.routeName, (_) => false);
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // close when tappen out of dialog
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Log out'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Are you sure you want to log out?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Yes'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                print("log out!");
+                Navigator.pushNamedAndRemoveUntil(
+                    context, Login.routeName, (_) => false);
+              },
+            ),
+            TextButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                print("Don't log out!");
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
