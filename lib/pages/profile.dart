@@ -207,19 +207,34 @@ class _ProfileState extends State {
                 ],
               ),
             ),
-            SizedBox(height: 40),
-            RaisedButton(
-              onPressed: () {
-                // Authenticate the new user & create one
-                // _signup();
-              },
-              color: Theme.of(context).primaryColor,
-              padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Text('Edit',
-                  style: TextStyle(fontSize: 22, color: Colors.white)),
+            SizedBox(height: 30),
+            ButtonBar(
+              buttonPadding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+              alignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                RaisedButton(
+                  child: Text('Log out',
+                      style: TextStyle(fontSize: 22, color: Colors.white)),
+                  color: Colors.red,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  onPressed: () {
+                    _showMyDialog();
+                  },
+                ),
+                RaisedButton(
+                  child: Text('Save',
+                      style: TextStyle(fontSize: 22, color: Colors.white)),
+                  color: Theme.of(context).primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  onPressed: () {
+                    // _signup();
+                  },
+                ),
+              ],
             ),
           ],
         ),
@@ -230,7 +245,6 @@ class _ProfileState extends State {
         width: 80.0,
         child: FittedBox(
           child: FloatingActionButton(
-            backgroundColor: Colors.green,
             onPressed: null,
             child: CircleAvatar(
               radius: 40.0,
@@ -315,7 +329,40 @@ class _ProfileState extends State {
     });
   }
 
-  void _back() {
-    Navigator.pushNamedAndRemoveUntil(context, Login.routeName, (_) => false);
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // close when tappen out of dialog
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Log out'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Are you sure you want to log out?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Yes'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                print("log out!");
+                Navigator.pushNamedAndRemoveUntil(
+                    context, Login.routeName, (_) => false);
+              },
+            ),
+            TextButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                print("Don't log out!");
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

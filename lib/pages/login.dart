@@ -140,7 +140,7 @@ class _LoginState extends State {
         onTabSelected: _selectedTab,
         items: [
           CustomAppBarItem(icon: Icons.home),
-          CustomAppBarItem(icon: Icons.graphic_eq),
+          CustomAppBarItem(icon: Icons.security),
           CustomAppBarItem(icon: Icons.info),
           CustomAppBarItem(icon: Icons.person),
         ],

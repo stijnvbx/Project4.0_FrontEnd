@@ -78,7 +78,7 @@ class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
           onTap: () => onPressed(index),
           child: Icon(
             item.icon,
-            color: _selectedIndex == index ? Colors.black : Colors.white,
+            color: _selectedIndex == index ? Color(0xFF320331) : Colors.white,
             size: 24.0,
           ),
         ),
@@ -121,7 +121,7 @@ class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
         ),
       ),
       shape: CircularNotchedRectangle(),
-      color: Colors.green,
+      color: Theme.of(context).primaryColor,
     );
   }
 }
