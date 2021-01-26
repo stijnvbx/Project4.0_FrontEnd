@@ -1,5 +1,6 @@
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:project4_front_end/apis/user_api.dart';
 import 'package:project4_front_end/models/user.dart';
 import 'package:project4_front_end/pages/home.dart';
 import 'package:project4_front_end/widgets/bottomNavbar.dart';
@@ -19,7 +20,7 @@ class _LoginState extends State {
   var _formKey = GlobalKey<FormState>();
 
   String _passwordError;
-  User user;
+  User user = User();
   int userID;
 
   int _selectedIndex;
@@ -33,7 +34,7 @@ class _LoginState extends State {
   @override
   void initState() {
     super.initState();
-    //getData(null);
+    getData();
     setSelectedIndex(0);
   }
 
@@ -44,7 +45,6 @@ class _LoginState extends State {
 
   @override
   Widget build(BuildContext context) {
-    
     return new Scaffold(
       appBar: Navbar(tabName: 'Login'),
       //drawer: MainDrawer(),
@@ -92,8 +92,8 @@ class _LoginState extends State {
               child: new ListTile(
                 title: new TextFormField(
                   validator: (String value) {
-                    if (value.length < 4) {
-                      return "Enter at least 4 characters";
+                    if (value.length < 2) {
+                      return "Enter at least 2 characters";
                     } else {
                       return null;
                     }
@@ -150,50 +150,47 @@ class _LoginState extends State {
     );
   }
 
-  setUserID(User username) async {
+  setUserID(User user) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt('userID', username.id);
+    prefs.setInt('userID', user.id);
   }
 
-  getData(int i) async {
+  getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       userID = prefs.getInt('userID');
       print("test: " + userID.toString());
-      if (userID != null) {
-        //Navigator.pushNamed(context, MyMaps.routeName, arguments: userID);
-        if (i != null) {
-          Flushbar(
-            title: "Logged in",
-            message: "You are logged in.",
-            duration: Duration(seconds: 3),
-          ).show(context);
-        }
-      }
     });
   }
 
   void _signin() {
-    if (emailController.text != "" && passwordController.text != "") {
-      /*UserApi.fetchUserLogin(user.username, user.password).then((username) {
-        if (username.isEmpty) {
+    user.email = emailController.text;
+    user.password = passwordController.text;
+    if (user.email != "" && user.password != "") {
+      UserApi.getUserLogin(user.email, user.password).then((user) {
+        if (user.isEmpty) {
           Flushbar(
             title: "Sign up failed",
-            message: "Your username or password was incorrect.",
-            duration: Duration(seconds: 3),
+            message: "Your email or password was incorrect.",
+            duration: Duration(seconds: 2),
           ).show(context);
         } else {
-          setUserID(username[0]);
-          getData(1);
+          setUserID(user[0]);
+          getData();
+          Navigator.pushNamedAndRemoveUntil(
+              context, HomePage.routeName, (_) => false);
+          Flushbar(
+            title: "Logged in",
+            message: "You are logged in.",
+            duration: Duration(seconds: 2),
+          ).show(context);
         }
-      });*/
+      });
     } else {
-      Navigator.pushNamedAndRemoveUntil(
-            context, HomePage.routeName, (_) => false);
       Flushbar(
         title: "Log in failed",
         message: "Please fill in every field.",
-        duration: Duration(seconds: 3),
+        duration: Duration(seconds: 2),
       ).show(context);
     }
   }

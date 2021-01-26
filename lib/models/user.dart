@@ -32,15 +32,4 @@ class User {
         city: json['city'],
         userTypeID: json['userTypeID']);
   }
-
-  Map<String, dynamic> toJson() => {
-        'firstName': firstName,
-        'lastName': lastName,
-        'password': password,
-        'email': email,
-        'address': address,
-        'postalCode': postalcode,
-        'city': city,
-        'userTypeID': userTypeID
-      };
 }

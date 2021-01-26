@@ -23,12 +23,4 @@ class Location {
         startDate: json['startDate'],
         endDate: json['endDate']);
   }
-
-  Map<String, dynamic> toJson() => {
-        'latitude': latitude,
-        'longitude': longitude,
-        'boxUserID': boxUserID,
-        'startDate': startDate,
-        'endDate': endDate,
-      };
 }

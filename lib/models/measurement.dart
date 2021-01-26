@@ -15,11 +15,4 @@ class Measurement {
         value: json['value'],
         timestamp: json['timestamp']);
   }
-
-  Map<String, dynamic> toJson() => {
-        'boxID': boxID,
-        'sensorID': sensorID,
-        'value': value,
-        'timestamp': timestamp,
-      };
 }

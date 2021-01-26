@@ -15,11 +15,4 @@ class BoxUser {
         startDate: json['startDate'],
         endDate: json['endDate']);
   }
-
-  Map<String, dynamic> toJson() => {
-        'boxID': boxID,
-        'userID': userID,
-        'startDate': startDate,
-        'endDate': endDate,
-      };
 }
