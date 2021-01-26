@@ -4,9 +4,7 @@ class User {
   String lastName;
   String password;
   String email;
-  String street;
-  String housenr;
-  String bus;
+  String address;
   String postalcode;
   String city;
   int userTypeID;
@@ -17,38 +15,31 @@ class User {
       this.lastName,
       this.password,
       this.email,
-      this.street,
-      this.housenr,
-      this.bus,
+      this.address,
       this.postalcode,
       this.city,
       this.userTypeID});
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'],
-      email: json['email'],
-      firstName: json['first_name'],
-      lastName: json['last_name'],
-      password: json['password'],
-      street: json['street'],
-      housenr: json['housenr'],
-      bus: json['bus'],
-      postalcode: json['postalcode'],
-      city: json['city'],
-      userTypeID: json['userTypeID']
-    );
+        id: json['userID'],
+        firstName: json['firstName'],
+        lastName: json['lastName'],
+        password: json['password'],
+        email: json['email'],
+        address: json['address'],
+        postalcode: json['postalCode'],
+        city: json['city'],
+        userTypeID: json['userTypeID']);
   }
 
   Map<String, dynamic> toJson() => {
-        'email': email,
-        'first_name': firstName,
-        'last_name': lastName,
+        'firstName': firstName,
+        'lastName': lastName,
         'password': password,
-        'street': street,
-        'housenr': housenr,
-        'bus': bus,
-        'postalcode': postalcode,
+        'email': email,
+        'address': address,
+        'postalCode': postalcode,
         'city': city,
         'userTypeID': userTypeID
       };

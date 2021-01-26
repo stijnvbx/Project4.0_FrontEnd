@@ -14,7 +14,9 @@ class CustomBottomAppBar extends StatefulWidget {
   final List<CustomAppBarItem> items;
 
   CustomBottomAppBar({this.onTabSelected, this.items}) {
-    assert(this.items.length == 0 || this.items.length == 2 || this.items.length == 4);
+    assert(this.items.length == 0 ||
+        this.items.length == 2 ||
+        this.items.length == 4);
   }
 
   @override
@@ -22,7 +24,7 @@ class CustomBottomAppBar extends StatefulWidget {
 }
 
 class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
-  int _selectedIndex = 0;
+  int _selectedIndex;
 
   @override
   void initState() {
@@ -33,23 +35,25 @@ class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
   void _updateIndex(int index) {
     widget.onTabSelected(index);
     setState(() {
-      _selectedIndex = index;
-      if (_selectedIndex == 0) {
-        setSelectedIndex(_selectedIndex);
-        print("login");
-        Navigator.pushNamedAndRemoveUntil(
-            context, HomePage.routeName, (_) => false);
-      } else if (_selectedIndex == 1) {
-        setSelectedIndex(_selectedIndex);
-        print("graph");
-      } else if (_selectedIndex == 2) {
-        setSelectedIndex(_selectedIndex);
-        print("info");
-      } else {
-        print("register");
-        setSelectedIndex(_selectedIndex);
-        Navigator.pushNamedAndRemoveUntil(
-            context, Profile.routeName, (_) => false);
+      if (index != _selectedIndex) {
+        _selectedIndex = index;
+        if (_selectedIndex == 0) {
+          setSelectedIndex(_selectedIndex);
+          print("home");
+          Navigator.pushNamedAndRemoveUntil(
+              context, HomePage.routeName, (_) => false);
+        } else if (_selectedIndex == 1) {
+          setSelectedIndex(_selectedIndex);
+          print("graph");
+        } else if (_selectedIndex == 2) {
+          setSelectedIndex(_selectedIndex);
+          print("info");
+        } else {
+          print("register");
+          setSelectedIndex(_selectedIndex);
+          Navigator.pushNamedAndRemoveUntil(
+              context, Profile.routeName, (_) => false);
+        }
       }
     });
   }
@@ -63,7 +67,7 @@ class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       _selectedIndex = prefs.getInt('selectedIndex');
-      print("test: " + _selectedIndex.toString());
+      print("selectedIndex: " + _selectedIndex.toString());
     });
   }
 

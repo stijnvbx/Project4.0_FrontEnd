@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:project4_front_end/apis/box_api.dart';
+import 'package:project4_front_end/models/box.dart';
 import 'package:project4_front_end/widgets/bottomNavbar.dart';
 import 'package:project4_front_end/widgets/navbar.dart';
 
@@ -10,26 +12,32 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePage extends State {
-  List<String> boxList = ["box1", "box2", "box3", "box4", "box5", "box6", "box7", "box8"];
+  List<Box> boxList;
   int count = 0;
   int userID;
-  //User user = User();
-  //UserMapData userMapData;
   List maxScoreList = [];
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      count = boxList.length;
-    });
+    _getBoxes();
   }
 
-  int _selectedIndex = 0;
+  int _selectedIndex;
 
   void _selectedTab(int index) {
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  void _getBoxes() {
+    BoxApi.getBoxes().then((result) {
+      setState(() {
+        boxList = result;
+        count = boxList.length;
+        print("box 1: " + boxList[0].name);
+      });
     });
   }
 
@@ -71,43 +79,48 @@ class _HomePage extends State {
   }
 
   _boxListItems() {
-    return ListView.builder(
-      itemCount: count,
-      itemBuilder: (BuildContext context, int position) {
-        return Card(
-          color: Colors.white,
-          elevation: 2.0,
-          child: ListTile(
-            leading: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  CircleAvatar(
-                    backgroundColor: Theme.of(context).primaryColor,
-                    child: Text((position+1).toString()), // Show the first two leter of the map name
+    if (boxList == null) {
+      // show a ProgressIndicator as long as there's no map info
+      return Center(child: CircularProgressIndicator());
+    } else {
+      return ListView.builder(
+        itemCount: count,
+        itemBuilder: (BuildContext context, int position) {
+          return Card(
+            color: Colors.white,
+            elevation: 2.0,
+            child: ListTile(
+              leading: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    CircleAvatar(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      child: Text((position + 1)
+                          .toString()), // Show the first two leter of the map name
+                    ),
+                  ]),
+              title: Text(this.boxList[position].name),
+              subtitle: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child:
+                        // Text(
+                        //     "Items: " + 0.toString() + "/" + this.mapList[position].maxItems.toString()),
+                        Text("Location: " + this.boxList[position].comment),
                   ),
-                ]),
-            title: Text(this.boxList[position]),
-            subtitle: Column(
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child:
-                      // Text(
-                      //     "Items: " + 0.toString() + "/" + this.mapList[position].maxItems.toString()),
-                      Text("Location: " +
-                          this.boxList[position]),
-                ),
-              ],
+                ],
+              ),
+              isThreeLine: true,
+              onTap: () {
+                debugPrint("Tapped on myMapId: " +
+                    this.boxList[position].id.toString());
+                print("Navigate to home");
+              },
             ),
-            isThreeLine: true,
-            onTap: () {
-              debugPrint("Tapped on myMapId: " +
-                  this.boxList[position]);
-              print("Navigate to home");
-            },
-          ),
-        );
-      },
-    );
+          );
+        },
+      );
+    }
   }
 }
