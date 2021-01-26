@@ -328,8 +328,14 @@ class _ProfileState extends State {
               onPressed: () {
                 Navigator.of(context).pop();
                 print("log out!");
+                clearUserID();
                 Navigator.pushNamedAndRemoveUntil(
                     context, Login.routeName, (_) => false);
+                Flushbar(
+                  title: "Logged out",
+                  message: "You are succesfully logged out.",
+                  duration: Duration(seconds: 2),
+                ).show(context);
               },
             ),
             TextButton(
@@ -343,5 +349,10 @@ class _ProfileState extends State {
         );
       },
     );
+  }
+
+  clearUserID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('userID');
   }
 }

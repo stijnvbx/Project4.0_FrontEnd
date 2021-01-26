@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'package:project4_front_end/models/user.dart';
 
 class UserApi {
-
   static String url = "https://40.115.25.181:5001/api/User";
 
   // GET -> All users
@@ -15,6 +14,18 @@ class UserApi {
       return jsonResponse.map((user) => new User.fromJson(user)).toList();
     } else {
       throw Exception('Failed to load users!');
+    }
+  }
+
+  // GET -> All users
+  static Future<List<User>> getUserLogin(String email, String password) async {
+    final response =
+        await http.get(url + '/login?email=' + email + '&password=' + password);
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body);
+      return jsonResponse.map((user) => new User.fromJson(user)).toList();
+    } else {
+      throw Exception('Failed to load user!');
     }
   }
 
@@ -62,8 +73,7 @@ class UserApi {
 
   // DELETE -> user
   static Future deleteUser(int id) async {
-    final http.Response response =
-        await http.delete(url + '/' + id.toString());
+    final http.Response response = await http.delete(url + '/' + id.toString());
     if (response.statusCode == 200) {
       return;
     } else {
