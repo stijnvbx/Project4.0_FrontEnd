@@ -22,7 +22,7 @@ class _LoginState extends State {
   User user;
   int userID;
 
-  int _selectedIndex = 0;
+  int _selectedIndex;
 
   void _selectedTab(int index) {
     setState(() {

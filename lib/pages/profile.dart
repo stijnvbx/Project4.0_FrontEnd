@@ -18,9 +18,8 @@ class _ProfileState extends State {
   TextEditingController firstnameController = TextEditingController();
   TextEditingController lastnameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
-  TextEditingController streetController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
   TextEditingController housenrController = TextEditingController();
-  TextEditingController busController = TextEditingController();
   TextEditingController zipcodeController = TextEditingController();
   TextEditingController cityController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -31,15 +30,11 @@ class _ProfileState extends State {
   User user;
   int userID;
 
-  int _selectedIndex = 3;
+  int _selectedIndex;
 
   void _selectedTab(int index) {
     setState(() {
       _selectedIndex = index;
-      if (_selectedIndex == 3) {
-        Navigator.pushNamedAndRemoveUntil(
-            context, Profile.routeName, (_) => false);
-      }
     });
   }
 
@@ -52,9 +47,7 @@ class _ProfileState extends State {
       lastName: "",
       email: "",
       password: "",
-      street: "",
-      housenr: "",
-      bus: "",
+      address: "",
       postalcode: "",
       city: "",
       userTypeID: 1,
@@ -113,7 +106,7 @@ class _ProfileState extends State {
                     Flexible(
                       // Street
                       child: TextFormField(
-                        controller: streetController,
+                        controller: addressController,
                         textInputAction: TextInputAction.next,
                         textCapitalization: TextCapitalization.words,
                         decoration: new InputDecoration(
@@ -134,20 +127,6 @@ class _ProfileState extends State {
                         decoration: new InputDecoration(
                           hintText: "Nr",
                           labelText: "Nr",
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 10),
-                    SizedBox(
-                      width: 50,
-                      // Bus
-                      child: TextFormField(
-                        controller: busController,
-                        textInputAction: TextInputAction.next,
-                        textCapitalization: TextCapitalization.words,
-                        decoration: new InputDecoration(
-                          hintText: "Bus",
-                          labelText: "Bus",
                         ),
                       ),
                     ),
