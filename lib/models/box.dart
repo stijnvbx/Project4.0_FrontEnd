@@ -15,4 +15,12 @@ class Box {
         comment: json['comment'],
         active: json['active']);
   }
+
+  Map<String, dynamic> toJson() => {
+        'boxID': id,
+        'macAddress': macAddress,
+        'name': name,
+        'comment': comment,
+        'active': active
+      };
 }

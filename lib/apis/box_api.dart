@@ -64,11 +64,7 @@ class BoxApi {
       },
       body: jsonEncode(box),
     );
-    if (response.statusCode == 200) {
-      return Box.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to update box!');
-    }
+    print("statusCode: " + response.statusCode.toString());
   }
 
   // DELETE -> user

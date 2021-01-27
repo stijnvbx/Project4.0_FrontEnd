@@ -11,4 +11,7 @@ class Sensor {
         sensorTypeID: json['sensorTypeID'],
         name: json['name']);
   }
+
+  Map<String, dynamic> toJson() =>
+      {'sensorID': id, 'sensorTypeID': sensorTypeID, 'name': name};
 }

@@ -53,11 +53,7 @@ class LocationApi {
       },
       body: jsonEncode(location),
     );
-    if (response.statusCode == 200) {
-      return Location.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to update location!');
-    }
+    print("statusCode: " + response.statusCode.toString());
   }
 
   // DELETE -> location

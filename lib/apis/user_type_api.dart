@@ -53,11 +53,7 @@ class UserTypeApi {
       },
       body: jsonEncode(userType),
     );
-    if (response.statusCode == 200) {
-      return UserType.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to update userType!');
-    }
+    print("statusCode: " + response.statusCode.toString());
   }
 
   // DELETE -> userType

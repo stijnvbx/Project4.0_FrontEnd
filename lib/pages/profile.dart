@@ -27,6 +27,7 @@ class _ProfileState extends State {
   var _formKey = GlobalKey<FormState>();
 
   String _passwordError;
+
   User user;
   int userID;
 
@@ -41,25 +42,57 @@ class _ProfileState extends State {
   @override
   void initState() {
     super.initState();
-    //getData();
-    user = new User(
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      address: "",
-      postalcode: "",
-      city: "",
-      userTypeID: 1,
-    );
+    getData();
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: Navbar(tabName: 'Profile'),
-      //drawer: MainDrawer(),
-      body: new SingleChildScrollView(
+      body: _profile(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Container(
+        height: 80.0,
+        width: 80.0,
+        child: FittedBox(
+          child: FloatingActionButton(
+            onPressed: null,
+            child: CircleAvatar(
+              radius: 40.0,
+              backgroundImage: AssetImage("assets/logo.png"),
+            ),
+            elevation: 2.0,
+          ),
+        ),
+      ),
+      bottomNavigationBar: CustomBottomAppBar(
+        onTabSelected: _selectedTab,
+        items: [
+          CustomAppBarItem(icon: Icons.home),
+          CustomAppBarItem(icon: Icons.graphic_eq),
+          CustomAppBarItem(icon: Icons.info),
+          CustomAppBarItem(icon: Icons.person),
+        ],
+      ),
+    );
+  }
+
+  _profile() {
+    if (user == null) {
+      // show a ProgressIndicator as long as there's no map info
+      return Center(child: CircularProgressIndicator());
+    } else {
+      var addressSplit = user.address.split(" ");
+      firstnameController.text = user.firstName;
+      lastnameController.text = user.lastName;
+      emailController.text = user.email;
+      passwordController.text = user.password;
+      addressController.text = addressSplit[0];
+      housenrController.text = addressSplit[1];
+      zipcodeController.text = user.postalCode;
+      cityController.text = user.city;
+
+      return new SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -210,102 +243,79 @@ class _ProfileState extends State {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   onPressed: () {
-                    // _signup();
+                    _edit();
                   },
                 ),
               ],
             ),
           ],
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Container(
-        height: 80.0,
-        width: 80.0,
-        child: FittedBox(
-          child: FloatingActionButton(
-            onPressed: null,
-            child: CircleAvatar(
-              radius: 40.0,
-              backgroundImage: AssetImage("assets/logo.png"),
-            ),
-            elevation: 2.0,
-          ),
-        ),
-      ),
-      bottomNavigationBar: CustomBottomAppBar(
-        onTabSelected: _selectedTab,
-        items: [
-          CustomAppBarItem(icon: Icons.home),
-          CustomAppBarItem(icon: Icons.graphic_eq),
-          CustomAppBarItem(icon: Icons.info),
-          CustomAppBarItem(icon: Icons.person),
-        ],
-      ),
-    );
-  }
-
-  /*void _signup() {
-    user.firstName = firstnameController.text;
-    user.lastName = lastnameController.text;
-    user.username = usernameController.text;
-    user.email = emailController.text;
-    user.password = passwordController.text;
-    if (user.firstName != "" &&
-        user.lastName != "" &&
-        user.username != "" &&
-        user.email != "" &&
-        user.password != "") {
-      if (user.password.length > 3) {
-        UserApi.fetchUsername(user.username).then((username) {
-          if (username.isEmpty) {
-            UserApi.createUser(user).then((result) {
-              Navigator.of(context).pushNamed('/');
-              setUserID(result);
-              getData();
-              Flushbar(
-                title: "Sign up succesful",
-                message: "You have create a new account with username: " +
-                    user.username +
-                    ".",
-                duration: Duration(seconds: 3),
-              ).show(context);
-            });
-          } else {
-            Flushbar(
-              title: "Sign up failed",
-              message: "The username you tried to use is already in use.",
-              duration: Duration(seconds: 3),
-            ).show(context);
-          }
-        });
-      } else {
-        Flushbar(
-          title: "Sign up failed",
-          message: "The password needs to be longer then 3 characters.",
-          duration: Duration(seconds: 3),
-        ).show(context);
-      }
-    } else {
-      Flushbar(
-        title: "Sign up failed",
-        message: "Please fill in every field.",
-        duration: Duration(seconds: 3),
-      ).show(context);
+      );
     }
-  }*/
-
-  setUserID(User username) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt('userID', username.id);
   }
 
   getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      userID = prefs.getInt('userID');
-      print("test: " + userID.toString());
-    });
+    userID = prefs.getInt('userID');
+    if (userID != null) {
+      UserApi.getUser(userID).then((result) {
+        // call the api to fetch the user data
+        setState(() {
+          user = result;
+          print("test: " + user.toString());
+        });
+      });
+    }
+  }
+
+  void _edit() {
+    user.firstName = firstnameController.text;
+    user.lastName = lastnameController.text;
+    user.email = emailController.text;
+    user.password = passwordController.text;
+    user.address = addressController.text + " " + housenrController.text;
+    user.postalCode = zipcodeController.text;
+    user.city = cityController.text;
+    print(user.firstName);
+    print(user.lastName);
+    print(user.email);
+    print(user.password);
+    print(user.address);
+    print(user.postalCode);
+    print(user.city);
+    if (user.firstName != "" &&
+        user.lastName != "" &&
+        user.email != "" &&
+        user.password != "" &&
+        user.postalCode != "" &&
+        user.city != "" &&
+        addressController.text != "" &&
+        housenrController.text != "") {
+      UserApi.getUserEmail(user.email).then((userEmail) {
+        if (userEmail.isEmpty || user.id == userEmail[0].id) {
+          UserApi.updateUser(user.id, user).then((result) {
+            Flushbar(
+              title: "Edit succesful",
+              message:
+                  "You have edited the user with email: " + user.email + ".",
+              duration: Duration(seconds: 2),
+            ).show(context);
+          });
+        } else {
+          Flushbar(
+            title: "Edit failed",
+            message: "The email you tried to use is already in use.",
+            duration: Duration(seconds: 2),
+          ).show(context);
+        }
+      });
+    } else {
+      Flushbar(
+        title: "Edit failed",
+        message: "Please fill in every field.",
+        duration: Duration(seconds: 2),
+      ).show(context);
+    }
   }
 
   Future<void> _showMyDialog() async {

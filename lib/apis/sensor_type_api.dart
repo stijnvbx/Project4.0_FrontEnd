@@ -53,11 +53,7 @@ class SensorTypeApi {
       },
       body: jsonEncode(sensorType),
     );
-    if (response.statusCode == 200) {
-      return SensorType.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to update sensorType!');
-    }
+    print("statusCode: " + response.statusCode.toString());
   }
 
   // DELETE -> sensorType
