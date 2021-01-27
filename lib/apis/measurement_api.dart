@@ -68,11 +68,7 @@ class MeasurementApi {
       },
       body: jsonEncode(measurement),
     );
-    if (response.statusCode == 200) {
-      return Measurement.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to update measurement!');
-    }
+    print("statusCode: " + response.statusCode.toString());
   }
 
   // DELETE -> measurement

@@ -102,11 +102,9 @@ class _HomePage extends State {
               title: Text(this.boxList[position].name),
               subtitle: Column(
                 children: [
-                  Align(
+                  if(this.boxList[position].comment != null)Align(
                     alignment: Alignment.centerLeft,
-                    child:
-                        // Text(
-                        //     "Items: " + 0.toString() + "/" + this.mapList[position].maxItems.toString()),
+                    child: 
                         Text("Location: " + this.boxList[position].comment),
                   ),
                 ],

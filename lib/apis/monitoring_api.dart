@@ -53,11 +53,7 @@ class MonitoringApi {
       },
       body: jsonEncode(monitoring),
     );
-    if (response.statusCode == 200) {
-      return Monitoring.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to update monitoring!');
-    }
+    print("statusCode: " + response.statusCode.toString());
   }
 
   // DELETE -> monitoring
