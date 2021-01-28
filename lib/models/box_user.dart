@@ -5,8 +5,8 @@ class BoxUser {
   int id;
   int boxID;
   int userID;
-  DateTime startDate;
-  DateTime endDate;
+  String startDate;
+  String endDate;
 
   BoxUser({this.id, this.boxID, this.userID, this.startDate, this.endDate});
 

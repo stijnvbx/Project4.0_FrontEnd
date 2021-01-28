@@ -3,7 +3,7 @@ class Measurement {
   int boxID;
   int sensorID;
   String value;
-  DateTime timestamp;
+  String timestamp;
 
   Measurement({this.id, this.boxID, this.sensorID, this.value, this.timestamp});
 

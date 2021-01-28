@@ -3,8 +3,8 @@ class Location {
   int boxUserID;
   double latitude;
   double longitude;
-  DateTime startDate;
-  DateTime endDate;
+  String startDate;
+  String endDate;
 
   Location(
       {this.id,

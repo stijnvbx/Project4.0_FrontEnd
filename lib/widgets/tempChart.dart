@@ -36,6 +36,18 @@ class _TempChartState extends State<TempChart> {
     _getTemps();
   }
 
+  _boxListItems() {
+    if (tempList == null) {
+      // show a ProgressIndicator as long as there's no map info
+      return Center(child: CircularProgressIndicator());
+    } else {
+      for (Measurement m in tempList) {
+        print(m.value);
+      }
+    }
+  }
+
+  //Layout
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,14 +83,5 @@ class _TempChartState extends State<TempChart> {
         ],
       ),
     );
-  }
-
-  _boxListItems() {
-    if (tempList == null) {
-      // show a ProgressIndicator as long as there's no map info
-      return Center(child: CircularProgressIndicator());
-    } else {
-      print(tempList[0].timestamp);
-    }
   }
 }
