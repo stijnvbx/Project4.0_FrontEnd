@@ -1,3 +1,6 @@
+import 'package:project4_front_end/models/box.dart';
+import 'package:project4_front_end/models/location.dart';
+
 class BoxUser {
   int id;
   int boxID;

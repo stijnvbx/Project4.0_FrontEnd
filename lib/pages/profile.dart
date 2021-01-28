@@ -70,7 +70,7 @@ class _ProfileState extends State {
         items: [
           CustomAppBarItem(icon: Icons.home),
           CustomAppBarItem(icon: Icons.graphic_eq),
-          CustomAppBarItem(icon: Icons.info),
+          CustomAppBarItem(icon: Icons.add_alert),
           CustomAppBarItem(icon: Icons.person),
         ],
       ),
