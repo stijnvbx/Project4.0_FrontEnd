@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:project4_front_end/pages/home.dart';
 import 'package:project4_front_end/pages/login.dart';
 import 'package:project4_front_end/pages/profile.dart';
+import 'package:project4_front_end/widgets/tempChart.dart';
 
 void main() {
   HttpOverrides.global = new MyHttpOverrides();
@@ -39,6 +40,7 @@ class MyFlutterVitoApp extends StatelessWidget {
       routes: {
         Profile.routeName: (_) => Profile(),
         HomePage.routeName: (_) => HomePage(),
+        TempChart.routeName: (_) => TempChart(),
       },
     );
   }
@@ -52,4 +54,3 @@ class MyHttpOverrides extends HttpOverrides {
           (X509Certificate cert, String host, int port) => true;
   }
 }
-
