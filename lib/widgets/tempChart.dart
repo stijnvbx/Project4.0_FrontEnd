@@ -78,7 +78,7 @@ class _TempChartState extends State<TempChart> {
       // show a ProgressIndicator as long as there's no map info
       return Center(child: CircularProgressIndicator());
     } else {
-      print(tempList[0].timestamp);
+      print(tempList[0].value);
     }
   }
 }

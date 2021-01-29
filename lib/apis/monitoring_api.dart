@@ -5,7 +5,7 @@ import 'package:project4_front_end/models/monitoring.dart';
 
 class MonitoringApi {
 
-  static String url = "https://40.115.25.181:5001/api/Monitoring";
+  static String url = "https://project40backend2.azurewebsites.net/api/Monitoring";
 
   // GET -> All monitorings
   static Future<List<Monitoring>> getMonitorings() async {

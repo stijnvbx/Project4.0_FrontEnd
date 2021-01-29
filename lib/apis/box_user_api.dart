@@ -5,7 +5,7 @@ import 'package:project4_front_end/models/box_user.dart';
 
 class BoxUserApi {
 
-  static String url = "https://40.115.25.181:5001/api/BoxUser";
+  static String url = "https://project40backend2.azurewebsites.net/api/BoxUser";
 
   // GET -> All boxUsers
   static Future<List<BoxUser>> getBoxUsers() async {
@@ -25,7 +25,7 @@ class BoxUserApi {
     print(response.statusCode);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
-      return jsonResponse.map((boxUser) => new BoxUser.fromJson(boxUser)).toList();
+      return jsonResponse.map((boxUser) => new BoxUser.fromJsonWithBoxAndLocations(boxUser)).toList();
     } else {
       throw Exception('Failed to load boxUsers!');
     }
