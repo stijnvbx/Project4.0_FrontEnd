@@ -5,7 +5,7 @@ import 'package:project4_front_end/models/location.dart';
 
 class LocationApi {
 
-  static String url = "https://40.115.25.181:5001/api/Location";
+  static String url = "https://project40backend2.azurewebsites.net/api/Location";
 
   // GET -> All locations
   static Future<List<Location>> getLocations() async {

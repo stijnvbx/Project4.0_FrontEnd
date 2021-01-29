@@ -48,7 +48,7 @@ class _ProfileState extends State {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: Navbar(tabName: 'Profile'),
+      appBar: Navbar(tabName: 'Profiel'),
       body: _profile(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Container(
@@ -108,8 +108,8 @@ class _ProfileState extends State {
                     textInputAction: TextInputAction.next,
                     textCapitalization: TextCapitalization.sentences,
                     decoration: new InputDecoration(
-                      hintText: "Firstname",
-                      labelText: "Firstname",
+                      hintText: "Voornaam",
+                      labelText: "Voornaam",
                       prefixIcon: Icon(Icons.person),
                     ),
                   ),
@@ -119,8 +119,8 @@ class _ProfileState extends State {
                     textInputAction: TextInputAction.next,
                     textCapitalization: TextCapitalization.words,
                     decoration: new InputDecoration(
-                      hintText: "Lastname",
-                      labelText: "Lastname",
+                      hintText: "Achternaam",
+                      labelText: "Achternaam",
                       prefixIcon: Icon(Icons.person),
                     ),
                   ),
@@ -143,8 +143,8 @@ class _ProfileState extends State {
                         textInputAction: TextInputAction.next,
                         textCapitalization: TextCapitalization.words,
                         decoration: new InputDecoration(
-                          hintText: "Street",
-                          labelText: "Street",
+                          hintText: "Straat",
+                          labelText: "Straat",
                           prefixIcon: Icon(Icons.location_on),
                         ),
                       ),
@@ -172,8 +172,8 @@ class _ProfileState extends State {
                         textInputAction: TextInputAction.next,
                         textCapitalization: TextCapitalization.words,
                         decoration: new InputDecoration(
-                          hintText: "City",
-                          labelText: "City",
+                          hintText: "Stad",
+                          labelText: "Stad",
                           prefixIcon: Icon(Icons.location_city),
                         ),
                       ),
@@ -187,8 +187,8 @@ class _ProfileState extends State {
                         textInputAction: TextInputAction.next,
                         textCapitalization: TextCapitalization.words,
                         decoration: new InputDecoration(
-                          hintText: "Zipcode",
-                          labelText: "Zipcode",
+                          hintText: "Postcode",
+                          labelText: "Postcode",
                         ),
                       ),
                     ),
@@ -209,8 +209,8 @@ class _ProfileState extends State {
                       textInputAction: TextInputAction.next,
                       decoration: new InputDecoration(
                         prefixIcon: Icon(Icons.lock),
-                        hintText: "Password",
-                        labelText: "Password",
+                        hintText: "Wachtwoord",
+                        labelText: "Wachtwoord",
                         errorText: _passwordError,
                       ),
                       obscureText: true,
@@ -225,7 +225,7 @@ class _ProfileState extends State {
               alignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 RaisedButton(
-                  child: Text('Log out',
+                  child: Text('Afmelden',
                       style: TextStyle(fontSize: 22, color: Colors.white)),
                   color: Colors.red,
                   shape: RoundedRectangleBorder(
@@ -236,7 +236,7 @@ class _ProfileState extends State {
                   },
                 ),
                 RaisedButton(
-                  child: Text('Save',
+                  child: Text('Opslaan',
                       style: TextStyle(fontSize: 22, color: Colors.white)),
                   color: Theme.of(context).primaryColor,
                   shape: RoundedRectangleBorder(
@@ -295,24 +295,24 @@ class _ProfileState extends State {
         if (userEmail.isEmpty || user.id == userEmail[0].id) {
           UserApi.updateUser(user.id, user).then((result) {
             Flushbar(
-              title: "Edit succesful",
+              title: "Aanpassen gelukt",
               message:
-                  "You have edited the user with email: " + user.email + ".",
+                  "Je profiel is goed aangepast.",
               duration: Duration(seconds: 2),
             ).show(context);
           });
         } else {
           Flushbar(
-            title: "Edit failed",
-            message: "The email you tried to use is already in use.",
+            title: "Aanpassen mislukt",
+            message: "Het e-mail dat je wou gebruiken is al in gebruik.",
             duration: Duration(seconds: 2),
           ).show(context);
         }
       });
     } else {
       Flushbar(
-        title: "Edit failed",
-        message: "Please fill in every field.",
+        title: "Aanpassen mislukt",
+        message: "Vul elk veld in.",
         duration: Duration(seconds: 2),
       ).show(context);
     }
@@ -324,17 +324,17 @@ class _ProfileState extends State {
       barrierDismissible: true, // close when tappen out of dialog
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Log out'),
+          title: Text('Aflmeden'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('Are you sure you want to log out?'),
+                Text('Bent u zeker dat u wilt afmelden?'),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Yes'),
+              child: Text('Ja'),
               onPressed: () {
                 Navigator.of(context).pop();
                 print("log out!");
@@ -342,14 +342,14 @@ class _ProfileState extends State {
                 Navigator.pushNamedAndRemoveUntil(
                     context, Login.routeName, (_) => false);
                 Flushbar(
-                  title: "Logged out",
-                  message: "You are succesfully logged out.",
+                  title: "Afgemeld",
+                  message: "Je bent nu afgemeld.",
                   duration: Duration(seconds: 2),
                 ).show(context);
               },
             ),
             TextButton(
-              child: Text('No'),
+              child: Text('Nee'),
               onPressed: () {
                 Navigator.of(context).pop();
                 print("Don't log out!");

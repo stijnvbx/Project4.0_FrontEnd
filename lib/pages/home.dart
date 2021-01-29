@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:project4_front_end/apis/box_user_api.dart';
 import 'package:project4_front_end/models/box_user.dart';
 import 'package:project4_front_end/widgets/bottomNavbar.dart';
@@ -16,7 +17,7 @@ class _HomePage extends State {
   List<BoxUser> boxList;
   int count = 0;
   int userID;
-  List maxScoreList = [];
+  List<String> location = [];
 
   @override
   void initState() {
@@ -85,10 +86,10 @@ class _HomePage extends State {
     if (boxList == null) {
       // show a ProgressIndicator as long as there's no map info
       return Center(child: CircularProgressIndicator());
-    } else if(boxList.isEmpty){
+    } else if (boxList.isEmpty) {
       return Center(
         child: Text(
-          "No boxes found!",
+          "Geen boxen gevonden!",
           textAlign: TextAlign.center,
         ),
       );
@@ -109,14 +110,20 @@ class _HomePage extends State {
                           .toString()), // Show the first two leter of the map name
                     ),
                   ]),
-              title: Text(this.boxList[position].boxID.toString()),
+              title: Text(this.boxList[position].box.name),
               subtitle: Column(
                 children: [
-                  if(this.boxList[position].startDate != null)Align(
-                    alignment: Alignment.centerLeft,
-                    child: 
-                        Text("Location: " + this.boxList[position].startDate.toString()),
-                  ),
+                  if (this.boxList[position].locations[0].latitude != null)
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text("Locatie: " +
+                            getCoordinats(
+                                position,
+                                this.boxList[position].locations[0].latitude,
+                                this
+                                    .boxList[position]
+                                    .locations[0]
+                                    .longitude))),
                 ],
               ),
               isThreeLine: true,
@@ -130,5 +137,25 @@ class _HomePage extends State {
         },
       );
     }
+  }
+
+  String getCoordinats(i, double lat, double long) {
+    _getCoordinats(lat, long);
+
+    if (location.isEmpty) {
+      return "";
+    } else {
+      return location[i];
+    }
+  }
+
+  _getCoordinats(double lat, double long) async {
+    var addresses = await Geocoder.local
+        .findAddressesFromCoordinates(new Coordinates(lat, long));
+    var first = addresses.first;
+    //print("${first.adminArea} : ${first.addressLine} : ${first.countryCode} : ${first.countryName} : ${first.locality} : ${first.postalCode} : ${first.subAdminArea} : ${first.subThoroughfare} : ${first.thoroughfare}");
+    setState(() {
+      location.add("${first.addressLine}, ${first.subAdminArea}");
+    });
   }
 }
