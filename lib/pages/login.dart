@@ -36,6 +36,17 @@ class _LoginState extends State {
     super.initState();
     getData();
     setSelectedIndex(0);
+    user = User(
+      id: 0,
+      firstName: "",
+      lastName: "",
+      password: "",
+      email: "",
+      address: "",
+      postalCode: "",
+      city: "",
+      userTypeID: 0,
+    );
   }
 
   setSelectedIndex(int selectedIndex) async {
@@ -173,18 +184,22 @@ class _LoginState extends State {
   }
 
   void _signin() {
-    user.email = emailController.text;
-    user.password = passwordController.text;
+    setState(() {
+      user.password = passwordController.text;
+      user.email = emailController.text;
+    });
+    print(user.password);
+    print(user.email);
     if (user.email != "" && user.password != "") {
-      UserApi.getUserLogin(user.email, user.password).then((user) {
-        if (user.isEmpty) {
+      UserApi.userAuthenticate(user).then((user) {
+        if (user == null) {
           Flushbar(
             title: "Aanmelden mislukt",
             message: "Je e-meil of wachtwoord is fout.",
             duration: Duration(seconds: 2),
           ).show(context);
         } else {
-          setUserID(user[0]);
+          setUserID(user);
           getData();
         }
       });

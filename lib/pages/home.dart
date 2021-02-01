@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:project4_front_end/apis/box_user_api.dart';
 import 'package:project4_front_end/models/box_user.dart';
+import 'package:project4_front_end/models/location.dart';
 import 'package:project4_front_end/widgets/bottomNavbar.dart';
 import 'package:project4_front_end/widgets/navbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,6 +19,8 @@ class _HomePage extends State {
   int count = 0;
   int userID;
   List<String> location = [];
+  Location currentLocation;
+  BoxUser boxUser;
 
   @override
   void initState() {
@@ -93,10 +96,13 @@ class _HomePage extends State {
           textAlign: TextAlign.center,
         ),
       );
-    } else {
+    } else {      
       return ListView.builder(
         itemCount: count,
         itemBuilder: (BuildContext context, int position) {
+
+          var lat = this.boxList[position].locations[0].latitude;
+          var long = this.boxList[position].locations[0].longitude;
           return Card(
             color: Colors.white,
             elevation: 2.0,
@@ -116,21 +122,14 @@ class _HomePage extends State {
                   if (this.boxList[position].locations[0].latitude != null)
                     Align(
                         alignment: Alignment.centerLeft,
-                        child: Text("Locatie: " +
-                            getCoordinats(
-                                position,
-                                this.boxList[position].locations[0].latitude,
-                                this
-                                    .boxList[position]
-                                    .locations[0]
-                                    .longitude))),
+                        child: Text(getCoordinats(position, lat, long))),
                 ],
               ),
               isThreeLine: true,
               onTap: () {
                 debugPrint("Tapped on myMapId: " +
                     this.boxList[position].id.toString());
-                print("Navigate to home");
+                print("Navigate to Sensors");
               },
             ),
           );
@@ -155,7 +154,7 @@ class _HomePage extends State {
     var first = addresses.first;
     //print("${first.adminArea} : ${first.addressLine} : ${first.countryCode} : ${first.countryName} : ${first.locality} : ${first.postalCode} : ${first.subAdminArea} : ${first.subThoroughfare} : ${first.thoroughfare}");
     setState(() {
-      location.add("${first.addressLine}, ${first.subAdminArea}");
+      location.add("${first.addressLine}");
     });
   }
 }

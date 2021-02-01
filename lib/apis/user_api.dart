@@ -51,6 +51,23 @@ class UserApi {
   }
 
   // POST -> Create user
+  static Future<User> userAuthenticate(User user) async {
+    final http.Response response = await http.post(
+      url + '/authenticate',
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(user),
+    );
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      return User.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to login!');
+    }
+  }
+
+  // POST -> Create user
   static Future<User> createUser(User user) async {
     final http.Response response = await http.post(
       url,
@@ -76,6 +93,11 @@ class UserApi {
       body: jsonEncode(user),
     );
     print("statusCode: " + response.statusCode.toString());
+    if (response.statusCode == 200) {
+      return User.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to create user!');
+    }
   }
 
   // DELETE -> user
