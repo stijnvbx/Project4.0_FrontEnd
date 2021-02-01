@@ -4,7 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:project4_front_end/models/measurement.dart';
 
 class MeasurementApi {
-  static String url = "https://40.115.25.181:5001/api/Measurement";
+  static String url =
+      "https://project40backend2.azurewebsites.net/api/Measurement";
 
   // GET -> All measurements
   static Future<List<Measurement>> getMeasurements() async {
