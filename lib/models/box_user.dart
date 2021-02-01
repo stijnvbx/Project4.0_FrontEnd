@@ -29,9 +29,9 @@ class BoxUser {
   }
 
   factory BoxUser.fromJsonWithBoxAndLocations(Map<String, dynamic> json) {
-
     var list = json['locations'] as List;
-    List<Location> locationsList = list.map((i) => Location.fromJson(i)).toList();
+    List<Location> locationsList =
+        list.map((i) => Location.fromJson(i)).toList();
 
     return BoxUser(
         id: json['boxUserID'],
