@@ -23,19 +23,22 @@ class _NavbarState extends State<Navbar> {
       centerTitle: false,
       title:
           new Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(
-          widget.tabName.toString(),
-          style: TextStyle(
-              color: Color(0xFF320331)),
+        Flexible(
+          child: Text(
+            widget.tabName.toString(),
+            style: TextStyle(color: Color(0xFF320331)),
+          ),
         ),
-        FlatButton(
-          onPressed: null,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
-            child: Image.asset(
-              'assets/logo_vito.jpg',
-              height: 45.0,
-              fit: BoxFit.fill,
+        Flexible(
+          child: FlatButton(
+            onPressed: null,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: Image.asset(
+                'assets/logo_vito.jpg',
+                height: 45.0,
+                fit: BoxFit.fill,
+              ),
             ),
           ),
         ),

@@ -19,11 +19,11 @@ class BoxApi {
   }
 
   // GET -> All boxes
-  static Future<List<Box>> getBoxesSensorMeasurements() async {
-    final response = await http.get(url + '/Sensor/Measurements');
+  static Future<Box> getBoxesSensorMeasurements(int id) async {
+    final response = await http.get(url + '/Sensor/Measurements/$id');
+    print(response.statusCode);
     if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body);
-      return jsonResponse.map((box) => new Box.fromJson(box)).toList();
+      return Box.fromJsonBoxSensors(jsonDecode(response.body));
     } else {
       throw Exception('Failed to load boxes!');
     }
