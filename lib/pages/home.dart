@@ -5,6 +5,7 @@ import 'package:project4_front_end/models/box_user.dart';
 import 'package:project4_front_end/models/location.dart';
 import 'package:project4_front_end/widgets/bottomNavbar.dart';
 import 'package:project4_front_end/widgets/navbar.dart';
+import 'package:project4_front_end/pages/sensorsPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,6 +22,7 @@ class _HomePage extends State {
   List<String> location = [];
   Location currentLocation;
   BoxUser boxUser;
+  List<Location> currentLocations = [];
 
   @override
   void initState() {
@@ -44,6 +46,14 @@ class _HomePage extends State {
       setState(() {
         boxList = result;
         count = boxList.length;
+
+        for (boxUser in boxList) {
+          for (currentLocation in boxUser.locations) {
+            if (currentLocation.endDate == null) {
+              currentLocations.add(currentLocation);
+            }
+          }
+        }
       });
     });
   }
@@ -96,45 +106,59 @@ class _HomePage extends State {
           textAlign: TextAlign.center,
         ),
       );
-    } else {      
+    } else {
       return ListView.builder(
         itemCount: count,
         itemBuilder: (BuildContext context, int position) {
-
-          var lat = this.boxList[position].locations[0].latitude;
-          var long = this.boxList[position].locations[0].longitude;
-          return Card(
-            color: Colors.white,
-            elevation: 2.0,
-            child: ListTile(
-              leading: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    CircleAvatar(
-                      backgroundColor: Theme.of(context).primaryColor,
-                      child: Text((position + 1)
-                          .toString()), // Show the first two leter of the map name
-                    ),
-                  ]),
-              title: Text(this.boxList[position].box.name),
-              subtitle: Column(
-                children: [
-                  if (this.boxList[position].locations[0].latitude != null)
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(getCoordinats(position, lat, long))),
-                ],
+          var lat = currentLocations[position].latitude;
+          var long = currentLocations[position].longitude;
+          return Row(children: <Widget>[
+            Flexible(
+              child: Card(
+                color: Colors.white,
+                elevation: 2.0,
+                child: ListTile(
+                  leading: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        CircleAvatar(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          child: Text((position + 1)
+                              .toString()), // Show the first two leter of the map name
+                        ),
+                      ]),
+                  title: Text(this.boxList[position].box.name),
+                  subtitle: Column(
+                    children: [
+                      if (this.boxList[position].locations[0].latitude != null)
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(getCoordinats(position, lat, long))),
+                    ],
+                  ),
+                  isThreeLine: true,
+                  onTap: () {
+                    debugPrint("Tapped on myMapId: " +
+                        this.boxList[position].box.id.toString());
+                    print("Navigate to Sensors");
+                    _showSensors(this.boxList[position].box.id);
+                  },
+                ),
               ),
-              isThreeLine: true,
-              onTap: () {
-                debugPrint("Tapped on myMapId: " +
-                    this.boxList[position].id.toString());
-                print("Navigate to Sensors");
-              },
             ),
-          );
+          ]);
         },
       );
+    }
+  }
+
+  void _showSensors(int id) async {
+    bool result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Sensors(id)),
+    );
+    if (result == true) {
+      _getBoxes();
     }
   }
 

@@ -18,16 +18,16 @@ class UserApi {
   }
 
   // GET -> user login
-  static Future<List<User>> getUserLogin(String email, String password) async {
-    final response =
-        await http.get(url + '/login?email=' + email + '&password=' + password);
-    if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body);
-      return jsonResponse.map((user) => new User.fromJson(user)).toList();
-    } else {
-      throw Exception('Failed to load user!');
-    }
-  }
+  // static Future<List<User>> getUserLogin(String email, String password) async {
+  //   final response =
+  //       await http.get(url + '/login?email=' + email + '&password=' + password);
+  //   if (response.statusCode == 200) {
+  //     List jsonResponse = json.decode(response.body);
+  //     return jsonResponse.map((user) => new User.fromJson(user)).toList();
+  //   } else {
+  //     throw Exception('Failed to load user!');
+  //   }
+  // }
 
   // GET -> user email
   static Future<List<User>> getUserEmail(String email) async {
