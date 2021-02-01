@@ -3,8 +3,8 @@ class Location {
   int boxUserID;
   double latitude;
   double longitude;
-  DateTime startDate;
-  DateTime endDate;
+  String startDate;
+  String endDate;
 
   Location(
       {this.id,
@@ -23,4 +23,13 @@ class Location {
         startDate: json['startDate'],
         endDate: json['endDate']);
   }
+
+  Map<String, dynamic> toJson() => {
+        'locationID': id,
+        'latitude': latitude,
+        'longitude': longitude,
+        'boxUserID': boxUserID,
+        'startDate': startDate,
+        'endDate': endDate
+      };
 }

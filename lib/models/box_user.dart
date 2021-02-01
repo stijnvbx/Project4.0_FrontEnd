@@ -1,9 +1,12 @@
+import 'package:project4_front_end/models/box.dart';
+import 'package:project4_front_end/models/location.dart';
+
 class BoxUser {
   int id;
   int boxID;
   int userID;
-  DateTime startDate;
-  DateTime endDate;
+  String startDate;
+  String endDate;
 
   BoxUser({this.id, this.boxID, this.userID, this.startDate, this.endDate});
 
@@ -15,4 +18,12 @@ class BoxUser {
         startDate: json['startDate'],
         endDate: json['endDate']);
   }
+
+  Map<String, dynamic> toJson() => {
+        'boxUserID': id,
+        'boxID': boxID,
+        'userID': userID,
+        'startDate': startDate,
+        'endDate': endDate
+      };
 }

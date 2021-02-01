@@ -20,4 +20,12 @@ class Monitoring {
         batteryStatus: json['batteryStatus'],
         batteryPercentage: json['batteryPercentage']);
   }
+
+  Map<String, dynamic> toJson() => {
+        'monitoringID': id,
+        'boxID': boxID,
+        'sdCapacity': sdCapacity,
+        'batteryStatus': batteryStatus,
+        'batteryPercentage': batteryPercentage
+      };
 }

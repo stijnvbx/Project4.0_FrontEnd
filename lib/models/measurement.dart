@@ -3,7 +3,7 @@ class Measurement {
   int boxID;
   int sensorID;
   String value;
-  DateTime timestamp;
+  String timestamp;
 
   Measurement({this.id, this.boxID, this.sensorID, this.value, this.timestamp});
 
@@ -13,6 +13,14 @@ class Measurement {
         boxID: json['boxID'],
         sensorID: json['sensorID'],
         value: json['value'],
-        timestamp: json['timestamp']);
+        timestamp: json['timeStamp']);
   }
+
+  Map<String, dynamic> toJson() => {
+        'measurementID': id,
+        'boxID': boxID,
+        'sensorID': sensorID,
+        'value': value,
+        'timeStamp': timestamp
+      };
 }

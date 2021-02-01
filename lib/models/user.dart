@@ -5,7 +5,7 @@ class User {
   String password;
   String email;
   String address;
-  String postalcode;
+  String postalCode;
   String city;
   int userTypeID;
 
@@ -16,7 +16,7 @@ class User {
       this.password,
       this.email,
       this.address,
-      this.postalcode,
+      this.postalCode,
       this.city,
       this.userTypeID});
 
@@ -28,8 +28,20 @@ class User {
         password: json['password'],
         email: json['email'],
         address: json['address'],
-        postalcode: json['postalCode'],
+        postalCode: json['postalCode'],
         city: json['city'],
         userTypeID: json['userTypeID']);
   }
+
+  Map<String, dynamic> toJson() => {
+        'userID': id,
+        'firstName': firstName,
+        'lastName': lastName,
+        'password': password,
+        'email': email,
+        'address': address,
+        'postalCode': postalCode,
+        'city': city,
+        'userTypeID': userTypeID
+      };
 }

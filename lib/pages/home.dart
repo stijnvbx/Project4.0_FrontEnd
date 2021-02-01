@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:project4_front_end/apis/box_api.dart';
-import 'package:project4_front_end/models/box.dart';
+import 'package:project4_front_end/apis/box_user_api.dart';
+import 'package:project4_front_end/models/box_user.dart';
 import 'package:project4_front_end/widgets/bottomNavbar.dart';
 import 'package:project4_front_end/widgets/navbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = '/home';
@@ -12,7 +13,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePage extends State {
-  List<Box> boxList;
+  List<BoxUser> boxList;
   int count = 0;
   int userID;
   List maxScoreList = [];
@@ -31,12 +32,14 @@ class _HomePage extends State {
     });
   }
 
-  void _getBoxes() {
-    BoxApi.getBoxes().then((result) {
+  void _getBoxes() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    userID = prefs.getInt('userID');
+    print(userID);
+    await BoxUserApi.getBoxUserWithUserId(userID).then((result) {
       setState(() {
         boxList = result;
         count = boxList.length;
-        print("box 1: " + boxList[0].name);
       });
     });
   }
@@ -71,7 +74,7 @@ class _HomePage extends State {
         items: [
           CustomAppBarItem(icon: Icons.home),
           CustomAppBarItem(icon: Icons.graphic_eq),
-          CustomAppBarItem(icon: Icons.info),
+          CustomAppBarItem(icon: Icons.add_alert),
           CustomAppBarItem(icon: Icons.person),
         ],
       ),
@@ -82,6 +85,13 @@ class _HomePage extends State {
     if (boxList == null) {
       // show a ProgressIndicator as long as there's no map info
       return Center(child: CircularProgressIndicator());
+    } else if(boxList.isEmpty){
+      return Center(
+        child: Text(
+          "No boxes found!",
+          textAlign: TextAlign.center,
+        ),
+      );
     } else {
       return ListView.builder(
         itemCount: count,
@@ -99,15 +109,13 @@ class _HomePage extends State {
                           .toString()), // Show the first two leter of the map name
                     ),
                   ]),
-              title: Text(this.boxList[position].name),
+              title: Text(this.boxList[position].boxID.toString()),
               subtitle: Column(
                 children: [
-                  Align(
+                  if(this.boxList[position].startDate != null)Align(
                     alignment: Alignment.centerLeft,
-                    child:
-                        // Text(
-                        //     "Items: " + 0.toString() + "/" + this.mapList[position].maxItems.toString()),
-                        Text("Location: " + this.boxList[position].comment),
+                    child: 
+                        Text("Location: " + this.boxList[position].startDate.toString()),
                   ),
                 ],
               ),

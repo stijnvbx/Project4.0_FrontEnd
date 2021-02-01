@@ -160,6 +160,15 @@ class _LoginState extends State {
     setState(() {
       userID = prefs.getInt('userID');
       print("test: " + userID.toString());
+      if (userID != null) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, HomePage.routeName, (_) => false);
+        Flushbar(
+          title: "Logged in",
+          message: "You are logged in.",
+          duration: Duration(seconds: 2),
+        ).show(context);
+      }
     });
   }
 
@@ -177,13 +186,6 @@ class _LoginState extends State {
         } else {
           setUserID(user[0]);
           getData();
-          Navigator.pushNamedAndRemoveUntil(
-              context, HomePage.routeName, (_) => false);
-          Flushbar(
-            title: "Logged in",
-            message: "You are logged in.",
-            duration: Duration(seconds: 2),
-          ).show(context);
         }
       });
     } else {

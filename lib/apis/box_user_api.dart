@@ -10,6 +10,19 @@ class BoxUserApi {
   // GET -> All boxUsers
   static Future<List<BoxUser>> getBoxUsers() async {
     final response = await http.get(url);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body);
+      return jsonResponse.map((boxUser) => new BoxUser.fromJson(boxUser)).toList();
+    } else {
+      throw Exception('Failed to load boxUsers!');
+    }
+  }
+
+  // GET -> All boxUsers
+  static Future<List<BoxUser>> getBoxUserWithUserId(int id) async {
+    final response = await http.get(url + '/userId/$id');
+    print(response.statusCode);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((boxUser) => new BoxUser.fromJson(boxUser)).toList();
@@ -53,11 +66,7 @@ class BoxUserApi {
       },
       body: jsonEncode(boxUser),
     );
-    if (response.statusCode == 200) {
-      return BoxUser.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to update boxUser!');
-    }
+    print("statusCode: " + response.statusCode.toString());
   }
 
   // DELETE -> boxUser
