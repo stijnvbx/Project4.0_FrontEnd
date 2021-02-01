@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:project4_front_end/models/user.dart';
 
 class UserApi {
-  static String url = "https://40.115.25.181:5001/api/User";
+  static String url = "https://project40backend2.azurewebsites.net/api/User";
 
   // GET -> All users
   static Future<List<User>> getUsers() async {

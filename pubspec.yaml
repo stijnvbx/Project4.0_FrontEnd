@@ -26,8 +26,8 @@ dependencies:
   flushbar: ^1.10.4
   shared_preferences: ^0.5.12+4
   http: ^0.12.2
-  charts_flutter: ^0.9.0
   line_chart: ^1.0.3
+  geocoder: ^0.2.1
 
 
   # The following adds the Cupertino Icons font to your application.

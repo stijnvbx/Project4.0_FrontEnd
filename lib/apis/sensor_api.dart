@@ -5,7 +5,7 @@ import 'package:project4_front_end/models/sensor.dart';
 
 class SensorApi {
 
-  static String url = "https://40.115.25.181:5001/api/Sensor";
+  static String url = "https://project40backend2.azurewebsites.net/api/Sensor";
 
   // GET -> All sensors
   static Future<List<Sensor>> getSensors() async {

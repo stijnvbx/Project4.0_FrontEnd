@@ -1,5 +1,4 @@
-import 'dart:io';
-
+//import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:project4_front_end/pages/graphPage.dart';
 import 'package:project4_front_end/pages/home.dart';
@@ -7,7 +6,7 @@ import 'package:project4_front_end/pages/login.dart';
 import 'package:project4_front_end/pages/profile.dart';
 
 void main() {
-  HttpOverrides.global = new MyHttpOverrides();
+  // HttpOverrides.global = new MyHttpOverrides();
   runApp(MyFlutterVitoApp());
 }
 
@@ -46,11 +45,11 @@ class MyFlutterVitoApp extends StatelessWidget {
   }
 }
 
-class MyHttpOverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
-  }
-}
+// class MyHttpOverrides extends HttpOverrides {
+//   @override
+//   HttpClient createHttpClient(SecurityContext context) {
+//     return super.createHttpClient(context)
+//       ..badCertificateCallback =
+//           (X509Certificate cert, String host, int port) => true;
+//   }
+// }

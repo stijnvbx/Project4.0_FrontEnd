@@ -5,7 +5,7 @@ import 'package:project4_front_end/models/user_type.dart';
 
 class UserTypeApi {
 
-  static String url = "https://40.115.25.181:5001/api/UserType";
+  static String url = "https://project40backend2.azurewebsites.net/api/UserType";
 
   // GET -> All userTypes
   static Future<List<UserType>> getuserTypes() async {

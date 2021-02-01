@@ -46,7 +46,7 @@ class _LoginState extends State {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: Navbar(tabName: 'Login'),
+      appBar: Navbar(tabName: 'Aanmelden'),
       //drawer: MainDrawer(),
       body: new SingleChildScrollView(
         child: Column(
@@ -56,7 +56,7 @@ class _LoginState extends State {
             Padding(
               padding: EdgeInsets.fromLTRB(0, 80, 0, 0),
               child: new Text(
-                'Welcome',
+                'Welkom',
                 style: TextStyle(
                     fontFamily: 'Poppins', color: Colors.grey, fontSize: 60),
               ),
@@ -64,7 +64,7 @@ class _LoginState extends State {
             Padding(
               padding: EdgeInsets.fromLTRB(0, 0, 0, 50),
               child: new Text(
-                'Log in',
+                'Aanmelden',
                 style: TextStyle(
                   fontFamily: 'Poppins',
                   color: Colors.grey,
@@ -101,8 +101,8 @@ class _LoginState extends State {
                   controller: passwordController,
                   decoration: new InputDecoration(
                     prefixIcon: Icon(Icons.lock),
-                    hintText: "Password",
-                    labelText: "Password",
+                    hintText: "Wachtwoord",
+                    labelText: "Wachtwoord",
                     errorText: _passwordError,
                   ),
                   obscureText: true,
@@ -121,7 +121,7 @@ class _LoginState extends State {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              child: const Text('Log in',
+              child: const Text('Aanmelden',
                   style: TextStyle(fontSize: 22, color: Colors.white)),
             ),
           ],
@@ -164,8 +164,8 @@ class _LoginState extends State {
         Navigator.pushNamedAndRemoveUntil(
             context, HomePage.routeName, (_) => false);
         Flushbar(
-          title: "Logged in",
-          message: "You are logged in.",
+          title: "ingelogged",
+          message: "Je bent nu ingelogged.",
           duration: Duration(seconds: 2),
         ).show(context);
       }
@@ -179,8 +179,8 @@ class _LoginState extends State {
       UserApi.getUserLogin(user.email, user.password).then((user) {
         if (user.isEmpty) {
           Flushbar(
-            title: "Sign up failed",
-            message: "Your email or password was incorrect.",
+            title: "Aanmelden mislukt",
+            message: "Je e-meil of wachtwoord is fout.",
             duration: Duration(seconds: 2),
           ).show(context);
         } else {
@@ -190,8 +190,8 @@ class _LoginState extends State {
       });
     } else {
       Flushbar(
-        title: "Log in failed",
-        message: "Please fill in every field.",
+        title: "Aanmelden mislukt",
+        message: "Vul elk veld in.",
         duration: Duration(seconds: 2),
       ).show(context);
     }
