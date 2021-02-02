@@ -21,7 +21,7 @@ class BoxApi {
 
   // GET -> All boxes
   static Future<Box> getBoxesSensorMeasurements(int id, String token) async {
-    final response = await http.get(url + '/Sensor/Measurements/$id',
+    final response = await http.get(url + '/Sensor/$id',
     headers: {HttpHeaders.authorizationHeader: "Bearer $token"},);
     print(response.statusCode);
     if (response.statusCode == 200) {

@@ -1,13 +1,11 @@
-import 'package:project4_front_end/models/measurement.dart';
 import 'package:project4_front_end/models/sensor.dart';
 
 class SensorBox {
   int boxID;
   int sensorID;
   Sensor sensor;
-  List<Measurement> measurements;
 
-  SensorBox({this.boxID, this.sensorID, this.sensor, this.measurements});
+  SensorBox({this.boxID, this.sensorID, this.sensor});
 
   factory SensorBox.fromJson(Map<String, dynamic> json) {
     return SensorBox(
@@ -16,15 +14,11 @@ class SensorBox {
   }
 
   factory SensorBox.fromJsonBoxSensorsMeasurements(Map<String, dynamic> json) {
-    var list = json['measurements'] as List;
-    List<Measurement> measurementList =
-        list.map((i) => Measurement.fromJson(i)).toList();
 
     return SensorBox(
         boxID: json['boxID'],
         sensorID: json['sensorID'],
-        sensor: Sensor.fromJson(json['sensor']),
-        measurements: measurementList);
+        sensor: Sensor.fromJson(json['sensor']));
   }
 
   Map<String, dynamic> toJson() => {

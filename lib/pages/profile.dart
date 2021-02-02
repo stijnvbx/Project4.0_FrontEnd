@@ -22,7 +22,8 @@ class _ProfileState extends State {
   TextEditingController housenrController = TextEditingController();
   TextEditingController zipcodeController = TextEditingController();
   TextEditingController cityController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  TextEditingController passwordController1 = TextEditingController();
+  TextEditingController passwordController2 = TextEditingController();
 
   var _formKey = GlobalKey<FormState>();
 
@@ -30,6 +31,7 @@ class _ProfileState extends State {
 
   User user;
   int userID;
+  String token;
 
   int _selectedIndex;
 
@@ -86,7 +88,8 @@ class _ProfileState extends State {
       firstnameController.text = user.firstName;
       lastnameController.text = user.lastName;
       emailController.text = user.email;
-      passwordController.text = user.password;
+      passwordController1.text;
+      passwordController2.text;
       addressController.text = addressSplit[0];
       housenrController.text = addressSplit[1];
       zipcodeController.text = user.postalCode;
@@ -101,15 +104,15 @@ class _ProfileState extends State {
               padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
               child: Column(
                 children: <Widget>[
-                  SizedBox(height: 80),
+                  SizedBox(height: 30),
                   // Firstname
                   TextFormField(
                     controller: firstnameController,
                     textInputAction: TextInputAction.next,
                     textCapitalization: TextCapitalization.sentences,
                     decoration: new InputDecoration(
-                      hintText: "Voornaam",
-                      labelText: "Voornaam",
+                      hintText: "Voornaam*",
+                      labelText: "Voornaam*",
                       prefixIcon: Icon(Icons.person),
                     ),
                   ),
@@ -119,8 +122,8 @@ class _ProfileState extends State {
                     textInputAction: TextInputAction.next,
                     textCapitalization: TextCapitalization.words,
                     decoration: new InputDecoration(
-                      hintText: "Achternaam",
-                      labelText: "Achternaam",
+                      hintText: "Achternaam*",
+                      labelText: "Achternaam*",
                       prefixIcon: Icon(Icons.person),
                     ),
                   ),
@@ -130,8 +133,8 @@ class _ProfileState extends State {
                     keyboardType: TextInputType.emailAddress,
                     controller: emailController,
                     decoration: new InputDecoration(
-                      hintText: "E-mail",
-                      labelText: "E-mail",
+                      hintText: "E-mail*",
+                      labelText: "E-mail*",
                       prefixIcon: Icon(Icons.email),
                     ),
                   ),
@@ -143,8 +146,8 @@ class _ProfileState extends State {
                         textInputAction: TextInputAction.next,
                         textCapitalization: TextCapitalization.words,
                         decoration: new InputDecoration(
-                          hintText: "Straat",
-                          labelText: "Straat",
+                          hintText: "Straat*",
+                          labelText: "Straat*",
                           prefixIcon: Icon(Icons.location_on),
                         ),
                       ),
@@ -158,8 +161,8 @@ class _ProfileState extends State {
                         textInputAction: TextInputAction.next,
                         textCapitalization: TextCapitalization.words,
                         decoration: new InputDecoration(
-                          hintText: "Nr",
-                          labelText: "Nr",
+                          hintText: "Nr*",
+                          labelText: "Nr*",
                         ),
                       ),
                     ),
@@ -172,8 +175,8 @@ class _ProfileState extends State {
                         textInputAction: TextInputAction.next,
                         textCapitalization: TextCapitalization.words,
                         decoration: new InputDecoration(
-                          hintText: "Stad",
-                          labelText: "Stad",
+                          hintText: "Stad*",
+                          labelText: "Stad*",
                           prefixIcon: Icon(Icons.location_city),
                         ),
                       ),
@@ -187,8 +190,8 @@ class _ProfileState extends State {
                         textInputAction: TextInputAction.next,
                         textCapitalization: TextCapitalization.words,
                         decoration: new InputDecoration(
-                          hintText: "Postcode",
-                          labelText: "Postcode",
+                          hintText: "Postcode*",
+                          labelText: "Postcode*",
                         ),
                       ),
                     ),
@@ -197,29 +200,51 @@ class _ProfileState extends State {
                   // Password
                   Form(
                     key: _formKey,
-                    child: new TextFormField(
-                      validator: (String value) {
-                        if (value.length < 4) {
-                          return "Enter at least 4 characters";
-                        } else {
-                          return null;
-                        }
-                      },
-                      controller: passwordController,
-                      textInputAction: TextInputAction.next,
-                      decoration: new InputDecoration(
-                        prefixIcon: Icon(Icons.lock),
-                        hintText: "Wachtwoord",
-                        labelText: "Wachtwoord",
-                        errorText: _passwordError,
-                      ),
-                      obscureText: true,
+                    child: Column(
+                      children: <Widget>[
+                        TextFormField(
+                          validator: (String value) {
+                            if (value.length < 4) {
+                              return "Enter at least 4 characters";
+                            } else {
+                              return null;
+                            }
+                          },
+                          controller: passwordController1,
+                          textInputAction: TextInputAction.next,
+                          decoration: new InputDecoration(
+                            prefixIcon: Icon(Icons.lock),
+                            hintText: "Wachtwoord",
+                            labelText: "Wachtwoord",
+                            errorText: _passwordError,
+                          ),
+                          obscureText: true,
+                        ),
+                        TextFormField(
+                          validator: (String value) {
+                            if (value.length < 4) {
+                              return "Enter at least 4 characters";
+                            } else {
+                              return null;
+                            }
+                          },
+                          controller: passwordController2,
+                          textInputAction: TextInputAction.next,
+                          decoration: new InputDecoration(
+                            prefixIcon: Icon(Icons.lock),
+                            hintText: "Wachtwoord",
+                            labelText: "Voer Wachtwoord opnieuw in",
+                            errorText: _passwordError,
+                          ),
+                          obscureText: true,
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 30),
+            SizedBox(height: 20),
             ButtonBar(
               buttonPadding: EdgeInsets.fromLTRB(30, 10, 30, 10),
               alignment: MainAxisAlignment.spaceEvenly,
@@ -257,12 +282,20 @@ class _ProfileState extends State {
   getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     userID = prefs.getInt('userID');
+    token = prefs.getString('token');
     if (userID != null) {
-      UserApi.getUser(userID).then((result) {
+      UserApi.getUser(userID, token).then((result) {
         // call the api to fetch the user data
         setState(() {
           user = result;
           print("test: " + user.toString());
+          print("firstName: " + user.firstName);
+          print("lastName: " + user.lastName);
+          print("email: " + user.email);
+          print("password: " + user.password);
+          print("address: " + user.address);
+          print("postalCode: " + user.postalCode);
+          print("city: " + user.city);
         });
       });
     }
@@ -272,18 +305,33 @@ class _ProfileState extends State {
     user.firstName = firstnameController.text;
     user.lastName = lastnameController.text;
     user.email = emailController.text;
-    user.password = passwordController.text;
+    if (passwordController1.text == passwordController2.text &&
+        user.password != passwordController1.text &&
+        user.password != passwordController2.text &&
+        passwordController1.text != "" &&
+        passwordController2.text != "") {
+      print("hallo");
+      user.password = passwordController1.text;
+    }
     user.address = addressController.text + " " + housenrController.text;
     user.postalCode = zipcodeController.text;
     user.city = cityController.text;
-    print(user.firstName);
-    print(user.lastName);
-    print(user.email);
-    print(user.password);
-    print(user.address);
-    print(user.postalCode);
-    print(user.city);
-    if (user.firstName != "" &&
+    print("firstName: " + user.firstName);
+    print("lastName: " + user.lastName);
+    print("email: " + user.email);
+    print("password: " + user.password);
+    print("address: " + user.address);
+    print("postalCode: " + user.postalCode);
+    print("city: " + user.city);
+    if (passwordController1.text != passwordController2.text &&
+            passwordController1.text != "" ||
+        passwordController2.text != "") {
+      Flushbar(
+        title: "Aanpassen mislukt",
+        message: "de 2 wachtwoorden komen niet overeen.",
+        duration: Duration(seconds: 2),
+      ).show(context);
+    } else if (user.firstName != "" &&
         user.lastName != "" &&
         user.email != "" &&
         user.password != "" &&
@@ -291,13 +339,12 @@ class _ProfileState extends State {
         user.city != "" &&
         addressController.text != "" &&
         housenrController.text != "") {
-      UserApi.getUserEmail(user.email).then((userEmail) {
+      UserApi.getUserEmail(user.email, token).then((userEmail) {
         if (userEmail.isEmpty || user.id == userEmail[0].id) {
-          UserApi.updateUser(user.id, user).then((result) {
+          UserApi.updateUser(user.id, user, token).then((result) {
             Flushbar(
               title: "Aanpassen gelukt",
-              message:
-                  "Je profiel is goed aangepast.",
+              message: "Je profiel is goed aangepast.",
               duration: Duration(seconds: 2),
             ).show(context);
           });
@@ -364,5 +411,6 @@ class _ProfileState extends State {
   clearUserID() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('userID');
+    prefs.remove('token');
   }
 }

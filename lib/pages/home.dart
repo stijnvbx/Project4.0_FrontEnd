@@ -20,7 +20,7 @@ class _HomePage extends State {
   int count = 0;
   int userID;
   String token;
-  List<String> location = [];
+  List<String> locations = [];
   Location currentLocation;
   BoxUser boxUser;
   List<Location> currentLocations = [];
@@ -49,11 +49,18 @@ class _HomePage extends State {
       setState(() {
         boxList = result;
         count = boxList.length;
-
-        for (boxUser in boxList) {
-          for (currentLocation in boxUser.locations) {
-            if (currentLocation.endDate == null) {
-              currentLocations.add(currentLocation);
+        print("test");
+        if (boxList != null) {
+          print("boxList != null");
+          for (boxUser in boxList) {
+            print("empty");
+            if (boxUser.locations.isNotEmpty) {
+              print("boxUser.locations.isNotEmpty");
+              for (currentLocation in boxUser.locations) {
+                if (currentLocation.endDate == null) {
+                  currentLocations.add(currentLocation);
+                }
+              }
             }
           }
         }
@@ -113,8 +120,13 @@ class _HomePage extends State {
       return ListView.builder(
         itemCount: count,
         itemBuilder: (BuildContext context, int position) {
-          var lat = currentLocations[position].latitude;
-          var long = currentLocations[position].longitude;
+          var lat = 0.0;
+          var long = 0.0;
+          if (this.boxList[position].locations.isNotEmpty) {
+            lat = currentLocations[position].latitude;
+            long = currentLocations[position].longitude;
+            _getCoordinats(lat, long);
+          }
           return Row(children: <Widget>[
             Flexible(
               child: Card(
@@ -133,10 +145,19 @@ class _HomePage extends State {
                   title: Text(this.boxList[position].box.name),
                   subtitle: Column(
                     children: [
-                      if (this.boxList[position].locations[0].latitude != null)
+                      if (locations.isNotEmpty)
                         Align(
                             alignment: Alignment.centerLeft,
-                            child: Text(getCoordinats(position, lat, long))),
+                            child: Text(locations[position])),
+                      if (locations.isEmpty)
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text('geen locatie')),
+                      SizedBox(height: 5),
+                      if (this.boxList[position].box.comment != null)
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(this.boxList[position].box.comment)),
                     ],
                   ),
                   isThreeLine: true,
@@ -165,23 +186,13 @@ class _HomePage extends State {
     }
   }
 
-  String getCoordinats(i, double lat, double long) {
-    _getCoordinats(lat, long);
-
-    if (location.isEmpty || location == null) {
-      return "";
-    } else {
-      return location[i];
-    }
-  }
-
   _getCoordinats(double lat, double long) async {
     var addresses = await Geocoder.local
         .findAddressesFromCoordinates(new Coordinates(lat, long));
     var first = addresses.first;
     //print("${first.adminArea} : ${first.addressLine} : ${first.countryCode} : ${first.countryName} : ${first.locality} : ${first.postalCode} : ${first.subAdminArea} : ${first.subThoroughfare} : ${first.thoroughfare}");
     setState(() {
-      location.add("${first.addressLine}");
+      locations.add("${first.addressLine}");
     });
   }
 }
