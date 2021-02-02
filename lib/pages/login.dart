@@ -164,6 +164,7 @@ class _LoginState extends State {
   setUserID(User user) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt('userID', user.id);
+    prefs.setString('token', user.token);
   }
 
   getData() async {

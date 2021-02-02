@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:project4_front_end/models/box_user.dart';
@@ -20,8 +21,9 @@ class BoxUserApi {
   }
 
   // GET -> All boxUsers
-  static Future<List<BoxUser>> getBoxUserWithUserId(int id) async {
-    final response = await http.get(url + '/userId/$id');
+  static Future<List<BoxUser>> getBoxUserWithUserId(int id, String token) async {
+    final response = await http.get(url + '/userId/$id',
+    headers: {HttpHeaders.authorizationHeader: "Bearer $token"},);
     print(response.statusCode);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);

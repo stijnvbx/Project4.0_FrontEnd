@@ -19,6 +19,7 @@ class _HomePage extends State {
   List<BoxUser> boxList;
   int count = 0;
   int userID;
+  String token;
   List<String> location = [];
   Location currentLocation;
   BoxUser boxUser;
@@ -41,8 +42,10 @@ class _HomePage extends State {
   void _getBoxes() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     userID = prefs.getInt('userID');
+    token = prefs.getString('token');
     print(userID);
-    await BoxUserApi.getBoxUserWithUserId(userID).then((result) {
+    print(token);
+    await BoxUserApi.getBoxUserWithUserId(userID, token).then((result) {
       setState(() {
         boxList = result;
         count = boxList.length;
@@ -141,7 +144,7 @@ class _HomePage extends State {
                     debugPrint("Tapped on myMapId: " +
                         this.boxList[position].box.id.toString());
                     print("Navigate to Sensors");
-                    _showSensors(this.boxList[position].box.id);
+                    _showSensors(this.boxList[position].box.id, token);
                   },
                 ),
               ),
@@ -152,10 +155,10 @@ class _HomePage extends State {
     }
   }
 
-  void _showSensors(int id) async {
+  void _showSensors(int id, String token) async {
     bool result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => Sensors(id)),
+      MaterialPageRoute(builder: (context) => Sensors(id, token)),
     );
     if (result == true) {
       _getBoxes();
@@ -165,7 +168,7 @@ class _HomePage extends State {
   String getCoordinats(i, double lat, double long) {
     _getCoordinats(lat, long);
 
-    if (location.isEmpty) {
+    if (location.isEmpty || location == null) {
       return "";
     } else {
       return location[i];
