@@ -6,7 +6,6 @@ import 'package:project4_front_end/models/measurement.dart';
 import 'package:project4_front_end/widgets/bottomNavbar.dart';
 import 'package:project4_front_end/widgets/navbar.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:intl/intl.dart';
 
 class GraphPage extends StatefulWidget {
   static const routeName = "/graphPage";
