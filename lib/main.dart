@@ -1,6 +1,5 @@
 //import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:project4_front_end/pages/graphPage.dart';
 import 'package:project4_front_end/pages/home.dart';
 import 'package:project4_front_end/pages/login.dart';
 import 'package:project4_front_end/pages/profile.dart';
@@ -39,7 +38,6 @@ class MyFlutterVitoApp extends StatelessWidget {
       routes: {
         Profile.routeName: (_) => Profile(),
         HomePage.routeName: (_) => HomePage(),
-        GraphPage.routeName: (_) => GraphPage(),
       },
     );
   }

@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:project4_front_end/apis/box_api.dart';
 import 'package:project4_front_end/models/box.dart';
+import 'package:project4_front_end/pages/graphPage.dart';
 import 'package:project4_front_end/widgets/bottomNavbar.dart';
 import 'package:project4_front_end/widgets/navbar.dart';
 
 class Sensors extends StatefulWidget {
   final int id;
-  Sensors(this.id);
+  final String token;
+  Sensors(this.id, this.token);
 
   @override
-  State<StatefulWidget> createState() => _SensorsState(id);
+  State<StatefulWidget> createState() => _SensorsState(id, token);
 }
 
 class _SensorsState extends State {
   int id;
-  _SensorsState(this.id);
+  String token;
+  _SensorsState(this.id, this.token);
 
   int _selectedIndex;
   int count = 0;
@@ -33,7 +36,7 @@ class _SensorsState extends State {
   }
 
   getSensors() async {
-    BoxApi.getBoxesSensorMeasurements(id).then((result) {
+    BoxApi.getBoxesSensorMeasurements(id, token).then((result) {
       // call the api to fetch the user data
       setState(() {
         box = result;
@@ -82,7 +85,7 @@ class _SensorsState extends State {
     } else if (box.sensorBoxes.isEmpty) {
       return Center(
         child: Text(
-          "Geen boxen gevonden!",
+          "Geen Sensoren gevonden!",
           textAlign: TextAlign.center,
         ),
       );
@@ -118,7 +121,7 @@ class _SensorsState extends State {
                     debugPrint("Tapped on myMapId: " +
                         this.box.sensorBoxes[position].sensor.id.toString());
                     print("Navigate to Sensors");
-                    //_showSensors(this.box.sensorBoxes[position].sensor.id);
+                    _showGraphPage(this.box.sensorBoxes[position].sensor.id, token);
                   },
                 ),
               ),
@@ -126,6 +129,16 @@ class _SensorsState extends State {
           ]);
         },
       );
+    }
+  }
+
+  void _showGraphPage(int id, String token) async {
+    bool result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => GraphPage(id, token)),
+    );
+    if (result == true) {
+      getSensors();
     }
   }
 }

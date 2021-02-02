@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:project4_front_end/models/measurement.dart';
@@ -21,8 +22,10 @@ class MeasurementApi {
   }
 
   // GET -> All measurements from one sensor
-  static Future<List<Measurement>> getMeasurementsFromSensor(int id) async {
-    final response = await http.get(url + '/Sensor/' + id.toString());
+  static Future<List<Measurement>> getMeasurementsFromSensor(int id, String token) async {
+    final response = await http.get(url + '/Sensor/' + id.toString(),
+    headers: {HttpHeaders.authorizationHeader: "Bearer $token"},);
+    print(response.statusCode);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse

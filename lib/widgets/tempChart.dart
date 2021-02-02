@@ -23,7 +23,7 @@ class _TempChartState extends State<TempChart> {
   }
 
   void _getTemps() {
-    MeasurementApi.getMeasurementsFromSensor(4).then((result) {
+    MeasurementApi.getMeasurementsFromSensor(4, "").then((result) {
       setState(() {
         tempList = result;
       });

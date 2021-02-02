@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:project4_front_end/pages/graphPage.dart';
 import 'package:project4_front_end/pages/home.dart';
 import 'package:project4_front_end/pages/profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -46,8 +45,6 @@ class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
         } else if (_selectedIndex == 1) {
           setSelectedIndex(_selectedIndex);
           print("graph");
-          Navigator.pushNamedAndRemoveUntil(
-              context, GraphPage.routeName, (_) => false);
         } else if (_selectedIndex == 2) {
           setSelectedIndex(_selectedIndex);
           print("info");

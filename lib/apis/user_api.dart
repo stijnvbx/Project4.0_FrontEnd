@@ -50,7 +50,7 @@ class UserApi {
     }
   }
 
-  // POST -> Create user
+  // POST -> Authenticate user
   static Future<User> userAuthenticate(User user) async {
     final http.Response response = await http.post(
       url + '/authenticate',
