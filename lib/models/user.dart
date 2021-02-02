@@ -8,6 +8,7 @@ class User {
   String postalCode;
   String city;
   int userTypeID;
+  String token;
 
   User(
       {this.id,
@@ -18,7 +19,8 @@ class User {
       this.address,
       this.postalCode,
       this.city,
-      this.userTypeID});
+      this.userTypeID,
+      this.token});
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
@@ -30,7 +32,8 @@ class User {
         address: json['address'],
         postalCode: json['postalCode'],
         city: json['city'],
-        userTypeID: json['userTypeID']);
+        userTypeID: json['userTypeID'],
+        token: json['token']);
   }
 
   Map<String, dynamic> toJson() => {

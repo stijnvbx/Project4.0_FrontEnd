@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:project4_front_end/models/box.dart';
@@ -19,11 +20,12 @@ class BoxApi {
   }
 
   // GET -> All boxes
-  static Future<List<Box>> getBoxesSensorMeasurements() async {
-    final response = await http.get(url + '/Sensor/Measurements');
+  static Future<Box> getBoxesSensorMeasurements(int id, String token) async {
+    final response = await http.get(url + '/Sensor/Measurements/$id',
+    headers: {HttpHeaders.authorizationHeader: "Bearer $token"},);
+    print(response.statusCode);
     if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body);
-      return jsonResponse.map((box) => new Box.fromJson(box)).toList();
+      return Box.fromJsonBoxSensors(jsonDecode(response.body));
     } else {
       throw Exception('Failed to load boxes!');
     }

@@ -8,9 +8,11 @@ import 'package:project4_front_end/widgets/navbar.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 
 class GraphPage extends StatefulWidget {
-  static const routeName = "/graphPage";
+  final int id;
+  final String token;
+  GraphPage(this.id, this.token);
 
-  State<StatefulWidget> createState() => _GraphPage();
+  State<StatefulWidget> createState() => _GraphPage(id, token);
 }
 
 class Temp {
@@ -21,6 +23,10 @@ class Temp {
 }
 
 class _GraphPage extends State {
+  int id;
+  String token;
+  _GraphPage(this.id, this.token);
+
   int _selectedIndex;
   List<Measurement> tempList;
   //List<package.LineChartModel> dataList = [];
@@ -40,7 +46,7 @@ class _GraphPage extends State {
   }
 
   _getTempList() {
-    MeasurementApi.getMeasurementsFromSensor(12).then((result) {
+    MeasurementApi.getMeasurementsFromSensor(id, token).then((result) {
       setState(() {
         tempList = result;
         var lineAirTempData = <Temp>[];
