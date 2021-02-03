@@ -42,18 +42,21 @@ class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
           print("home");
           Navigator.pushNamedAndRemoveUntil(
               context, HomePage.routeName, (_) => false);
-        } else if (_selectedIndex == 1) {
-          setSelectedIndex(_selectedIndex);
-          print("graph");
-        } else if (_selectedIndex == 2) {
-          setSelectedIndex(_selectedIndex);
-          print("info");
         } else {
           print("register");
           setSelectedIndex(_selectedIndex);
           Navigator.pushNamedAndRemoveUntil(
               context, Profile.routeName, (_) => false);
         }
+        // } else if (_selectedIndex == 2) {
+        //   setSelectedIndex(_selectedIndex);
+        //   print("info");
+        // } else {
+        //   print("register");
+        //   setSelectedIndex(_selectedIndex);
+        //   Navigator.pushNamedAndRemoveUntil(
+        //       context, Profile.routeName, (_) => false);
+        // }
       }
     });
   }

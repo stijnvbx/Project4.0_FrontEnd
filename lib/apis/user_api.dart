@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flushbar/flushbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:project4_front_end/models/user.dart';
 
@@ -55,7 +56,7 @@ class UserApi {
   }
 
   // POST -> Authenticate user
-  static Future<User> userAuthenticate(User user) async {
+  static Future<User> userAuthenticate(User user, context) async {
     final http.Response response = await http.post(
       url + '/authenticate',
       headers: <String, String>{
@@ -67,6 +68,11 @@ class UserApi {
     if (response.statusCode == 200) {
       return User.fromJson(jsonDecode(response.body));
     } else {
+      Flushbar(
+            title: "Aanmelden mislukt",
+            message: "Je e-meil of wachtwoord is fout.",
+            duration: Duration(seconds: 2),
+          ).show(context);
       throw Exception('Failed to login!');
     }
   }
