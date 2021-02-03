@@ -6,6 +6,8 @@ import 'package:project4_front_end/apis/measurement_api.dart';
 import 'package:project4_front_end/models/measurement.dart';
 import 'package:project4_front_end/widgets/bottomNavbar.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:week_of_year/week_of_year.dart';
+import 'package:intl/intl.dart';
 
 class GraphPage extends StatefulWidget {
   final int id;
@@ -16,10 +18,10 @@ class GraphPage extends StatefulWidget {
 }
 
 class Temp {
-  double timestamp;
-  double temperature;
+  int timestamp;
+  double value;
 
-  Temp(this.timestamp, this.temperature);
+  Temp(this.timestamp, this.value);
 }
 
 class _GraphPage extends State {
@@ -27,11 +29,11 @@ class _GraphPage extends State {
   String token;
   _GraphPage(this.id, this.token);
   int _selectedIndex;
-  List<Measurement> tempList;
+  List<Measurement> valList;
   //List<package.LineChartModel> dataList = [];
-  List<charts.Series<Temp, double>> _seriesDayData = [];
-  List<charts.Series<Temp, double>> _seriesWeekData = [];
-  List<charts.Series<Temp, double>> _seriesMonthData = [];
+  List<charts.Series<Temp, int>> _seriesDayData = [];
+  List<charts.Series<Temp, int>> _seriesWeekData = [];
+  List<charts.Series<Temp, int>> _seriesMonthData = [];
 
   void _selectedTab(int index) {
     setState(() {
@@ -50,40 +52,54 @@ class _GraphPage extends State {
   _getDayTempList() {
     MeasurementApi.getMeasurementsFromSensor(id, token).then((result) {
       setState(() {
-        tempList = result;
-        var lineAirTempData = <Temp>[];
-        for (Measurement m in tempList) {
-          String nowYear = DateTime.now().year.toString();
-          String nowMonth = DateTime.now().month.toString();
-          String nowDay = DateTime.now().day.toString();
-          String year = m.timestamp.split('T')[0].split('-')[0];
-          String month = m.timestamp.split('T')[0].split('-')[1];
-          String day = m.timestamp.split('T')[0].split('-')[2];
+        valList = result;
+        int counter = 0;
+        var lineDayData = <Temp>[];
+        List<Temp> perHourList = [];
+        for (Measurement m in valList) {
+          counter++;
+          String today = DateFormat("yyyy-MM-DD").format(DateTime.now());
+          String measurementDate =
+              DateFormat("yyyy-MM-DD").format(DateTime.parse(m.timestamp));
           String hour = m.timestamp.split('T')[1].split(':')[0];
-          String minute = m.timestamp.split('T')[1].split(':')[1];
-          String time = hour + "." + minute;
-          if (nowMonth.length < 2) {
-            nowMonth = "0" + nowMonth;
-          }
-          if (nowDay.length < 2) {
-            nowDay = "0" + nowDay;
-          }
-          if (nowYear == year && nowMonth == month && nowDay == day) {
-            print(time);
-            lineAirTempData
-                .add(new Temp(double.parse(time), double.parse(m.value)));
+
+          if (today == measurementDate) {
+            if (perHourList.isEmpty) {
+              perHourList.add(new Temp(int.parse(hour), double.parse(m.value)));
+            } else if (int.parse(hour) == perHourList.last.timestamp) {
+              perHourList.add(new Temp(int.parse(hour), double.parse(m.value)));
+            } else {
+              double value = 0.0;
+              for (Temp t in perHourList) {
+                value += t.value;
+              }
+              value /= perHourList.length;
+              perHourList.clear();
+              lineDayData.add(new Temp(int.parse(hour), value));
+              perHourList.add(new Temp(int.parse(hour), double.parse(m.value)));
+            }
+            if (valList.length == counter) {
+              double value = 0.0;
+              for (Temp t in perHourList) {
+                value += t.value;
+              }
+              value /= perHourList.length;
+              perHourList.clear();
+              lineDayData.add(new Temp(int.parse(hour), value));
+            }
+            lineDayData.add(new Temp(int.parse(hour), double.parse(m.value)));
           }
         }
 
-        if (lineAirTempData.isNotEmpty) {
+        if (lineDayData.isNotEmpty) {
           _seriesDayData.add(
             charts.Series(
               colorFn: (__, _) =>
                   charts.ColorUtil.fromDartColor(Color(0xff990099)),
               id: 'Lucht',
-              data: lineAirTempData,
+              data: lineDayData,
               domainFn: (Temp temperature, _) => temperature.timestamp,
-              measureFn: (Temp temperature, _) => temperature.temperature,
+              measureFn: (Temp temperature, _) => temperature.value,
             ),
           );
         }
@@ -94,35 +110,102 @@ class _GraphPage extends State {
   _getWeekTempList() {
     MeasurementApi.getMeasurementsFromSensor(id, token).then((result) {
       setState(() {
-        tempList = result;
-        var lineAirTempData = <Temp>[];
-        for (Measurement m in tempList) {
-          String nowYear = DateTime.now().year.toString();
-          String nowMonth = DateTime.now().month.toString();
-          String nowDay = DateTime.now().day.toString();
-          String year = m.timestamp.split('T')[0].split('-')[0];
-          String month = m.timestamp.split('T')[0].split('-')[1];
+        valList = result;
+        List<Temp> perDayList = [];
+        List<Temp> perNightList = [];
+
+        var lineDayTempData = <Temp>[];
+        var lineNightTempData = <Temp>[];
+        int counter = 0;
+
+        for (Measurement m in valList) {
+          counter++;
+          DateTime today = DateTime.now();
+          DateTime measurementDate = DateTime.parse(m.timestamp);
+          String measurementDay = m.timestamp.split('T')[0].split('-')[2];
           String day = m.timestamp.split('T')[0].split('-')[2];
-          if (nowMonth.length < 2) {
-            nowMonth = "0" + nowMonth;
-          }
-          if (nowDay.length < 2) {
-            nowDay = "0" + nowDay;
-          }
-          if (nowYear == year && nowMonth == month && nowDay == day) {
-            lineAirTempData
-                .add(new Temp(double.parse(day), double.parse(m.value)));
+          int hour = int.parse(m.timestamp.split('T')[1].split(':')[0]);
+
+          if (measurementDate.weekOfYear == today.weekOfYear) {
+            if (hour >= 6 && hour <= 18) {
+              if (perDayList.isEmpty) {
+                perDayList.add(new Temp(int.parse(day), double.parse(m.value)));
+              } else if (int.parse(day) == perDayList.last.timestamp) {
+                perDayList.add(new Temp(int.parse(day), double.parse(m.value)));
+              } else {
+                double value = 0.0;
+                for (Temp t in perDayList) {
+                  value += t.value;
+                }
+                value /= perDayList.length;
+                perDayList.clear();
+                lineDayTempData.add(new Temp(int.parse(day), value));
+                perDayList.add(new Temp(int.parse(day), double.parse(m.value)));
+              }
+              if (valList.length == counter) {
+                double value = 0.0;
+                for (Temp t in perDayList) {
+                  value += t.value;
+                }
+                value /= perDayList.length;
+                perDayList.clear();
+                lineDayTempData.add(new Temp(int.parse(day), value));
+              }
+            }
+
+            //Nacht
+            else {
+              if (perNightList.isEmpty) {
+                perNightList
+                    .add(new Temp(int.parse(day), double.parse(m.value)));
+              } else if (int.parse(day) == perNightList.last.timestamp) {
+                perNightList
+                    .add(new Temp(int.parse(day), double.parse(m.value)));
+              } else {
+                double value = 0.0;
+                for (Temp t in perNightList) {
+                  value += t.value;
+                }
+                value /= perNightList.length;
+                perNightList.clear();
+                lineNightTempData.add(new Temp(int.parse(day), value));
+                perNightList
+                    .add(new Temp(int.parse(day), double.parse(m.value)));
+              }
+              if (valList.length == counter) {
+                double value = 0.0;
+                for (Temp t in perNightList) {
+                  value += t.value;
+                }
+                value /= perNightList.length;
+                perNightList.clear();
+                lineNightTempData.add(new Temp(int.parse(day), value));
+              }
+            }
           }
         }
-        if (lineAirTempData.isNotEmpty) {
+        if (lineDayTempData.isNotEmpty) {
           _seriesWeekData.add(
             charts.Series(
               colorFn: (__, _) =>
-                  charts.ColorUtil.fromDartColor(Color(0xff990099)),
-              id: 'Lucht',
-              data: lineAirTempData,
+                  charts.ColorUtil.fromDartColor(Color(0xff990011)),
+              id: 'Dag',
+              data: lineDayTempData,
               domainFn: (Temp temperature, _) => temperature.timestamp,
-              measureFn: (Temp temperature, _) => temperature.temperature,
+              measureFn: (Temp temperature, _) => temperature.value,
+            ),
+          );
+        }
+
+        if (lineNightTempData.isNotEmpty) {
+          _seriesWeekData.add(
+            charts.Series(
+              colorFn: (__, _) =>
+                  charts.ColorUtil.fromDartColor(Color(0xff056050)),
+              id: 'Nacht',
+              data: lineDayTempData,
+              domainFn: (Temp temperature, _) => temperature.timestamp,
+              measureFn: (Temp temperature, _) => temperature.value,
             ),
           );
         }
@@ -133,34 +216,109 @@ class _GraphPage extends State {
   _getMonthTempList() {
     MeasurementApi.getMeasurementsFromSensor(id, token).then((result) {
       setState(() {
-        tempList = result;
-        var lineAirTempData = <Temp>[];
-        for (Measurement m in tempList) {
-          String nowYear = DateTime.now().year.toString();
-          String nowMonth = DateTime.now().month.toString();
-          String year = m.timestamp.split('T')[0].split('-')[0];
-          String month = m.timestamp.split('T')[0].split('-')[1];
-          String day = m.timestamp.split('T')[0].split('-')[2];
+        valList = result;
+        List<Temp> perDayList = [];
+        List<Temp> perNightList = [];
 
-          if (nowMonth.length < 2) {
-            nowMonth = "0" + nowMonth;
+        var lineDayTempData = <Temp>[];
+        var lineNightTempData = <Temp>[];
+        int counter = 0;
+        for (Measurement m in valList) {
+          counter++;
+          String thisMonth = DateFormat("yyyy-MM").format(DateTime.now());
+          String measurementMonth =
+              DateFormat("yyyy-MM").format(DateTime.parse(m.timestamp));
+          String day = m.timestamp.split('T')[0].split('-')[2];
+          int hour = int.parse(m.timestamp.split('T')[1].split(':')[0]);
+
+          if (thisMonth == measurementMonth) {
+            //DAG
+            //print("day: " + int.parse(day).toString());
+            //print("measure day: " + perDayList.last.timestamp.toString());
+            if (hour >= 6 && hour <= 18) {
+              if (perDayList.isEmpty) {
+                perDayList.add(new Temp(int.parse(day), double.parse(m.value)));
+              } else if (int.parse(day) == perDayList.last.timestamp) {
+                perDayList.add(new Temp(int.parse(day), double.parse(m.value)));
+              } else {
+                double value = 0.0;
+                for (Temp t in perDayList) {
+                  value += t.value;
+                }
+                value /= perDayList.length;
+                perDayList.clear();
+                lineDayTempData.add(new Temp(int.parse(day), value));
+                perDayList.add(new Temp(int.parse(day), double.parse(m.value)));
+              }
+              if (valList.length == counter) {
+                double value = 0.0;
+                for (Temp t in perDayList) {
+                  value += t.value;
+                }
+                value /= perDayList.length;
+                perDayList.clear();
+                lineDayTempData.add(new Temp(int.parse(day), value));
+              }
+            }
+
+            //Nacht
+            else {
+              if (perNightList.isEmpty) {
+                perNightList
+                    .add(new Temp(int.parse(day), double.parse(m.value)));
+              } else if (int.parse(day) == perNightList.last.timestamp) {
+                perNightList
+                    .add(new Temp(int.parse(day), double.parse(m.value)));
+              } else {
+                double value = 0.0;
+                for (Temp t in perNightList) {
+                  value += t.value;
+                }
+                value /= perNightList.length;
+                perNightList.clear();
+                lineNightTempData.add(new Temp(int.parse(day), value));
+                perNightList
+                    .add(new Temp(int.parse(day), double.parse(m.value)));
+              }
+              if (valList.length == counter) {
+                double value = 0.0;
+                for (Temp t in perNightList) {
+                  value += t.value;
+                }
+                value /= perNightList.length;
+                perNightList.clear();
+                lineNightTempData.add(new Temp(int.parse(day), value));
+              }
+            }
           }
-          if (nowYear == year && nowMonth == month) {
-            lineAirTempData
-                .add(new Temp(double.parse(day), double.parse(m.value)));
+          // for (Temp l in lineDayTempData) {
+          //   print("Dag lijst: " + l.value.toString());
+          // }
+
+          if (lineDayTempData.isNotEmpty) {
+            _seriesMonthData.add(
+              charts.Series(
+                colorFn: (__, _) =>
+                    charts.ColorUtil.fromDartColor(Color(0xff990011)),
+                id: 'Dag',
+                data: lineDayTempData,
+                domainFn: (Temp temperature, _) => temperature.timestamp,
+                measureFn: (Temp temperature, _) => temperature.value,
+              ),
+            );
           }
-        }
-        if (lineAirTempData.isNotEmpty) {
-          _seriesMonthData.add(
-            charts.Series(
-              colorFn: (__, _) =>
-                  charts.ColorUtil.fromDartColor(Color(0xff990099)),
-              id: 'Lucht',
-              data: lineAirTempData,
-              domainFn: (Temp temperature, _) => temperature.timestamp,
-              measureFn: (Temp temperature, _) => temperature.temperature,
-            ),
-          );
+          if (lineNightTempData.isNotEmpty) {
+            _seriesMonthData.add(
+              charts.Series(
+                colorFn: (__, _) =>
+                    charts.ColorUtil.fromDartColor(Color(0xff056050)),
+                id: 'Nacht',
+                data: lineNightTempData,
+                domainFn: (Temp temperature, _) => temperature.timestamp,
+                measureFn: (Temp temperature, _) => temperature.value,
+              ),
+            );
+          }
         }
       });
     });
@@ -202,7 +360,7 @@ class _GraphPage extends State {
   }
 
   _tempListItems() {
-    if (tempList == null) {
+    if (valList == null) {
       // show a ProgressIndicator as long as there's no map info
       return Center(child: CircularProgressIndicator());
     } else {
@@ -267,13 +425,15 @@ class _GraphPage extends State {
                                   viewport: new charts.NumericExtents(0, 24),
                                   tickProviderSpec:
                                       new charts.BasicNumericTickProviderSpec(
-                                    desiredTickCount: 1,
-                                  )),
+                                          zeroBound: true,
+                                          desiredMinTickCount: 12,
+                                          desiredMaxTickCount: 24)),
                               primaryMeasureAxis: new charts.NumericAxisSpec(
                                   tickProviderSpec:
                                       new charts.BasicNumericTickProviderSpec(
-                                zeroBound: false,
-                                desiredTickCount: 5,
+                                zeroBound: true,
+                                desiredMinTickCount: 10,
+                                desiredMaxTickCount: 20,
                               )),
                             ),
                           ),
@@ -324,14 +484,14 @@ class _GraphPage extends State {
                                   viewport: new charts.NumericExtents(1, 7),
                                   tickProviderSpec:
                                       new charts.BasicNumericTickProviderSpec(
-                                    zeroBound: false,
-                                    desiredTickCount: 1,
+                                    zeroBound: true,
+                                    desiredTickCount: 14,
                                   )),
                               primaryMeasureAxis: new charts.NumericAxisSpec(
                                   tickProviderSpec:
                                       new charts.BasicNumericTickProviderSpec(
-                                zeroBound: false,
-                                desiredTickCount: 5,
+                                zeroBound: true,
+                                desiredTickCount: 7,
                               )),
                             ),
                           ),
@@ -382,14 +542,14 @@ class _GraphPage extends State {
                                   viewport: new charts.NumericExtents(1, 31),
                                   tickProviderSpec:
                                       new charts.BasicNumericTickProviderSpec(
-                                    zeroBound: false,
-                                    desiredTickCount: 1,
-                                  )),
+                                          zeroBound: true,
+                                          desiredTickCount: 32)),
                               primaryMeasureAxis: new charts.NumericAxisSpec(
                                   tickProviderSpec:
                                       new charts.BasicNumericTickProviderSpec(
-                                zeroBound: false,
-                                desiredTickCount: 5,
+                                zeroBound: true,
+                                desiredMinTickCount: 10,
+                                desiredMaxTickCount: 20,
                               )),
                             ),
                           ),
