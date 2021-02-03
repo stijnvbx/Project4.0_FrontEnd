@@ -109,14 +109,6 @@ class _SensorsState extends State {
                         ),
                       ]),
                   title: Text(this.box.sensorBoxes[position].sensor.name),
-                  subtitle: Column(
-                    children: [
-                        Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text("test")),
-                    ],
-                  ),
-                  isThreeLine: true,
                   onTap: () {
                     debugPrint("Tapped on myMapId: " +
                         this.box.sensorBoxes[position].sensor.id.toString());

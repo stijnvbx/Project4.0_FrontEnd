@@ -24,6 +24,7 @@ class BoxApi {
       url + '/Sensor/$id',
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
     );
+
     print(response.statusCode);
     if (response.statusCode == 200) {
       return Box.fromJsonBoxSensors(jsonDecode(response.body));
