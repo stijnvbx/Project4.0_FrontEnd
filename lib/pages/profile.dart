@@ -37,6 +37,8 @@ class _ProfileState extends State {
 
   int _selectedIndex;
 
+  List<String> addressSplit;
+
   String _hash = 'Unknown';
 
   void _selectedTab(int index) {
@@ -86,14 +88,18 @@ class _ProfileState extends State {
       // show a ProgressIndicator as long as there's no map info
       return Center(child: CircularProgressIndicator());
     } else {
-      var addressSplit = user.address.split(" ");
+      addressSplit = user.address.split(" ");
       firstnameController.text = user.firstName;
       lastnameController.text = user.lastName;
       emailController.text = user.email;
       passwordController1.text;
       passwordController2.text;
       addressController.text = addressSplit[0];
-      housenrController.text = addressSplit[1];
+      if(addressSplit[1] != null){
+        housenrController.text = addressSplit[1];
+      } else {
+        housenrController.text = "";
+      }
       zipcodeController.text = user.postalCode;
       cityController.text = user.city;
 
