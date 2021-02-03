@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:project4_front_end/models/box.dart';
 
 class BoxApi {
-
   static String url = "https://project40backend2.azurewebsites.net/api/Box";
 
   // GET -> All boxes
@@ -21,8 +20,10 @@ class BoxApi {
 
   // GET -> All boxes
   static Future<Box> getBoxesSensorMeasurements(int id, String token) async {
-    final response = await http.get(url + '/Sensor/Measurements/$id',
-    headers: {HttpHeaders.authorizationHeader: "Bearer $token"},);
+    final response = await http.get(
+      url + '/Sensor/$id',
+      headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
+    );
     print(response.statusCode);
     if (response.statusCode == 200) {
       return Box.fromJsonBoxSensors(jsonDecode(response.body));
@@ -71,8 +72,7 @@ class BoxApi {
 
   // DELETE -> user
   static Future deleteBox(int id) async {
-    final http.Response response =
-        await http.delete(url + '/' + id.toString());
+    final http.Response response = await http.delete(url + '/' + id.toString());
     if (response.statusCode == 200) {
       return;
     } else {
