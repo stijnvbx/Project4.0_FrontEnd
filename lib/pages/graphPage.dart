@@ -5,7 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:project4_front_end/apis/measurement_api.dart';
 import 'package:project4_front_end/models/measurement.dart';
 import 'package:project4_front_end/widgets/bottomNavbar.dart';
-import 'package:project4_front_end/widgets/navbar.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 
 class GraphPage extends StatefulWidget {
@@ -30,9 +29,9 @@ class _GraphPage extends State {
   int _selectedIndex;
   List<Measurement> tempList;
   //List<package.LineChartModel> dataList = [];
-  List<charts.Series<Temp, double>> _seriesDayData;
-  List<charts.Series<Temp, double>> _seriesWeekData;
-  List<charts.Series<Temp, double>> _seriesMonthData;
+  List<charts.Series<Temp, double>> _seriesDayData = [];
+  List<charts.Series<Temp, double>> _seriesWeekData = [];
+  List<charts.Series<Temp, double>> _seriesMonthData = [];
 
   void _selectedTab(int index) {
     setState(() {
@@ -46,9 +45,6 @@ class _GraphPage extends State {
     _getDayTempList();
     _getWeekTempList();
     _getMonthTempList();
-    _seriesDayData = List<charts.Series<Temp, double>>();
-    _seriesWeekData = List<charts.Series<Temp, double>>();
-    _seriesMonthData = List<charts.Series<Temp, double>>();
   }
 
   _getDayTempList() {
@@ -64,28 +60,33 @@ class _GraphPage extends State {
           String month = m.timestamp.split('T')[0].split('-')[1];
           String day = m.timestamp.split('T')[0].split('-')[2];
           String hour = m.timestamp.split('T')[1].split(':')[0];
-          if (month.length < 2) {
-            month = "0" + month;
+          String minute = m.timestamp.split('T')[1].split(':')[1];
+          String time = hour + "." + minute;
+          if (nowMonth.length < 2) {
+            nowMonth = "0" + nowMonth;
           }
-          if (day.length < 2) {
-            day = "0" + day;
+          if (nowDay.length < 2) {
+            nowDay = "0" + nowDay;
           }
           if (nowYear == year && nowMonth == month && nowDay == day) {
+            print(time);
             lineAirTempData
-                .add(new Temp(double.parse(hour), double.parse(m.value)));
+                .add(new Temp(double.parse(time), double.parse(m.value)));
           }
         }
 
-        _seriesDayData.add(
-          charts.Series(
-            colorFn: (__, _) =>
-                charts.ColorUtil.fromDartColor(Color(0xff990099)),
-            id: 'Lucht',
-            data: lineAirTempData,
-            domainFn: (Temp temperature, _) => temperature.timestamp,
-            measureFn: (Temp temperature, _) => temperature.temperature,
-          ),
-        );
+        if (lineAirTempData.isNotEmpty) {
+          _seriesDayData.add(
+            charts.Series(
+              colorFn: (__, _) =>
+                  charts.ColorUtil.fromDartColor(Color(0xff990099)),
+              id: 'Lucht',
+              data: lineAirTempData,
+              domainFn: (Temp temperature, _) => temperature.timestamp,
+              measureFn: (Temp temperature, _) => temperature.temperature,
+            ),
+          );
+        }
       });
     });
   }
@@ -102,28 +103,29 @@ class _GraphPage extends State {
           String year = m.timestamp.split('T')[0].split('-')[0];
           String month = m.timestamp.split('T')[0].split('-')[1];
           String day = m.timestamp.split('T')[0].split('-')[2];
-          if (month.length < 2) {
-            month = "0" + month;
+          if (nowMonth.length < 2) {
+            nowMonth = "0" + nowMonth;
           }
-          if (day.length < 2) {
-            day = "0" + day;
+          if (nowDay.length < 2) {
+            nowDay = "0" + nowDay;
           }
           if (nowYear == year && nowMonth == month && nowDay == day) {
             lineAirTempData
                 .add(new Temp(double.parse(day), double.parse(m.value)));
           }
         }
-
-        _seriesWeekData.add(
-          charts.Series(
-            colorFn: (__, _) =>
-                charts.ColorUtil.fromDartColor(Color(0xff990099)),
-            id: 'Lucht',
-            data: lineAirTempData,
-            domainFn: (Temp temperature, _) => temperature.timestamp,
-            measureFn: (Temp temperature, _) => temperature.temperature,
-          ),
-        );
+        if (lineAirTempData.isNotEmpty) {
+          _seriesWeekData.add(
+            charts.Series(
+              colorFn: (__, _) =>
+                  charts.ColorUtil.fromDartColor(Color(0xff990099)),
+              id: 'Lucht',
+              data: lineAirTempData,
+              domainFn: (Temp temperature, _) => temperature.timestamp,
+              measureFn: (Temp temperature, _) => temperature.temperature,
+            ),
+          );
+        }
       });
     });
   }
@@ -139,25 +141,27 @@ class _GraphPage extends State {
           String year = m.timestamp.split('T')[0].split('-')[0];
           String month = m.timestamp.split('T')[0].split('-')[1];
           String day = m.timestamp.split('T')[0].split('-')[2];
-          if (month.length < 2) {
-            month = "0" + month;
+
+          if (nowMonth.length < 2) {
+            nowMonth = "0" + nowMonth;
           }
           if (nowYear == year && nowMonth == month) {
             lineAirTempData
                 .add(new Temp(double.parse(day), double.parse(m.value)));
           }
         }
-
-        _seriesMonthData.add(
-          charts.Series(
-            colorFn: (__, _) =>
-                charts.ColorUtil.fromDartColor(Color(0xff990099)),
-            id: 'Lucht',
-            data: lineAirTempData,
-            domainFn: (Temp temperature, _) => temperature.timestamp,
-            measureFn: (Temp temperature, _) => temperature.temperature,
-          ),
-        );
+        if (lineAirTempData.isNotEmpty) {
+          _seriesMonthData.add(
+            charts.Series(
+              colorFn: (__, _) =>
+                  charts.ColorUtil.fromDartColor(Color(0xff990099)),
+              id: 'Lucht',
+              data: lineAirTempData,
+              domainFn: (Temp temperature, _) => temperature.timestamp,
+              measureFn: (Temp temperature, _) => temperature.temperature,
+            ),
+          );
+        }
       });
     });
   }
@@ -227,13 +231,22 @@ class _GraphPage extends State {
                   child: Center(
                     child: Column(
                       children: <Widget>[
-                        Text(
-                          'Temperaturen van vandaag',
-                          style: TextStyle(
-                              fontSize: 24.0, fontWeight: FontWeight.bold),
-                        ),
-                        Expanded(
-                          child: charts.LineChart(_seriesDayData,
+                        if (_seriesDayData.isEmpty)
+                          Text(
+                            'Nog geen temperaturen vandaag',
+                            style: TextStyle(
+                                fontSize: 24.0, fontWeight: FontWeight.bold),
+                          ),
+                        if (_seriesDayData.isNotEmpty)
+                          Text(
+                            'Temperaturen van vandaag',
+                            style: TextStyle(
+                                fontSize: 24.0, fontWeight: FontWeight.bold),
+                          ),
+                        if (_seriesDayData.isNotEmpty)
+                          Expanded(
+                            child: charts.LineChart(
+                              _seriesDayData,
                               defaultRenderer: new charts.LineRendererConfig(
                                   includeArea: false, stacked: false),
                               animate: true,
@@ -249,8 +262,21 @@ class _GraphPage extends State {
                                         charts.BehaviorPosition.start,
                                     titleOutsideJustification: charts
                                         .OutsideJustification.middleDrawArea),
-                              ]),
-                        ),
+                              ],
+                              domainAxis: new charts.NumericAxisSpec(
+                                  viewport: new charts.NumericExtents(0, 24),
+                                  tickProviderSpec:
+                                      new charts.BasicNumericTickProviderSpec(
+                                    desiredTickCount: 1,
+                                  )),
+                              primaryMeasureAxis: new charts.NumericAxisSpec(
+                                  tickProviderSpec:
+                                      new charts.BasicNumericTickProviderSpec(
+                                zeroBound: false,
+                                desiredTickCount: 5,
+                              )),
+                            ),
+                          ),
                       ],
                     ),
                   ),
@@ -262,13 +288,22 @@ class _GraphPage extends State {
                   child: Center(
                     child: Column(
                       children: <Widget>[
-                        Text(
-                          'Temperaturen van deze week',
-                          style: TextStyle(
-                              fontSize: 24.0, fontWeight: FontWeight.bold),
-                        ),
-                        Expanded(
-                          child: charts.LineChart(_seriesWeekData,
+                        if (_seriesWeekData.isEmpty)
+                          Text(
+                            'Nog geen temperaturen deze week',
+                            style: TextStyle(
+                                fontSize: 24.0, fontWeight: FontWeight.bold),
+                          ),
+                        if (_seriesWeekData.isNotEmpty)
+                          Text(
+                            'Temperaturen van deze week',
+                            style: TextStyle(
+                                fontSize: 24.0, fontWeight: FontWeight.bold),
+                          ),
+                        if (_seriesWeekData.isNotEmpty)
+                          Expanded(
+                            child: charts.LineChart(
+                              _seriesWeekData,
                               defaultRenderer: new charts.LineRendererConfig(
                                   includeArea: false, stacked: false),
                               animate: true,
@@ -284,8 +319,22 @@ class _GraphPage extends State {
                                         charts.BehaviorPosition.start,
                                     titleOutsideJustification: charts
                                         .OutsideJustification.middleDrawArea),
-                              ]),
-                        ),
+                              ],
+                              domainAxis: new charts.NumericAxisSpec(
+                                  viewport: new charts.NumericExtents(1, 7),
+                                  tickProviderSpec:
+                                      new charts.BasicNumericTickProviderSpec(
+                                    zeroBound: false,
+                                    desiredTickCount: 1,
+                                  )),
+                              primaryMeasureAxis: new charts.NumericAxisSpec(
+                                  tickProviderSpec:
+                                      new charts.BasicNumericTickProviderSpec(
+                                zeroBound: false,
+                                desiredTickCount: 5,
+                              )),
+                            ),
+                          ),
                       ],
                     ),
                   ),
@@ -297,13 +346,22 @@ class _GraphPage extends State {
                   child: Center(
                     child: Column(
                       children: <Widget>[
-                        Text(
-                          'Temperaturen van deze maand',
-                          style: TextStyle(
-                              fontSize: 24.0, fontWeight: FontWeight.bold),
-                        ),
-                        Expanded(
-                          child: charts.LineChart(_seriesMonthData,
+                        if (_seriesMonthData.isEmpty)
+                          Text(
+                            'Nog geen temperaturen deze maand',
+                            style: TextStyle(
+                                fontSize: 24.0, fontWeight: FontWeight.bold),
+                          ),
+                        if (_seriesMonthData.isNotEmpty)
+                          Text(
+                            'Temperaturen van deze maand',
+                            style: TextStyle(
+                                fontSize: 24.0, fontWeight: FontWeight.bold),
+                          ),
+                        if (_seriesMonthData.isNotEmpty)
+                          Expanded(
+                            child: charts.LineChart(
+                              _seriesMonthData,
                               defaultRenderer: new charts.LineRendererConfig(
                                   includeArea: false, stacked: false),
                               animate: true,
@@ -319,8 +377,22 @@ class _GraphPage extends State {
                                         charts.BehaviorPosition.start,
                                     titleOutsideJustification: charts
                                         .OutsideJustification.middleDrawArea),
-                              ]),
-                        ),
+                              ],
+                              domainAxis: new charts.NumericAxisSpec(
+                                  viewport: new charts.NumericExtents(1, 31),
+                                  tickProviderSpec:
+                                      new charts.BasicNumericTickProviderSpec(
+                                    zeroBound: false,
+                                    desiredTickCount: 1,
+                                  )),
+                              primaryMeasureAxis: new charts.NumericAxisSpec(
+                                  tickProviderSpec:
+                                      new charts.BasicNumericTickProviderSpec(
+                                zeroBound: false,
+                                desiredTickCount: 5,
+                              )),
+                            ),
+                          ),
                       ],
                     ),
                   ),

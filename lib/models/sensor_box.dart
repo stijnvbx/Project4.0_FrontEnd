@@ -8,13 +8,10 @@ class SensorBox {
   SensorBox({this.boxID, this.sensorID, this.sensor});
 
   factory SensorBox.fromJson(Map<String, dynamic> json) {
-    return SensorBox(
-        boxID: json['boxID'],
-        sensorID: json['sensorID']);
+    return SensorBox(boxID: json['boxID'], sensorID: json['sensorID']);
   }
 
   factory SensorBox.fromJsonBoxSensorsMeasurements(Map<String, dynamic> json) {
-
     return SensorBox(
         boxID: json['boxID'],
         sensorID: json['sensorID'],
