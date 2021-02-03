@@ -49,13 +49,9 @@ class _HomePage extends State {
       setState(() {
         boxList = result;
         count = boxList.length;
-        print("test");
         if (boxList != null) {
-          print("boxList != null");
           for (boxUser in boxList) {
-            print("empty");
             if (boxUser.locations.isNotEmpty) {
-              print("boxUser.locations.isNotEmpty");
               for (currentLocation in boxUser.locations) {
                 if (currentLocation.endDate == null) {
                   currentLocations.add(currentLocation);
@@ -97,8 +93,8 @@ class _HomePage extends State {
         onTabSelected: _selectedTab,
         items: [
           CustomAppBarItem(icon: Icons.home),
-          CustomAppBarItem(icon: Icons.graphic_eq),
-          CustomAppBarItem(icon: Icons.add_alert),
+          // CustomAppBarItem(icon: Icons.graphic_eq),
+          // CustomAppBarItem(icon: Icons.add_alert),
           CustomAppBarItem(icon: Icons.person),
         ],
       ),
@@ -139,7 +135,7 @@ class _HomePage extends State {
                         CircleAvatar(
                           backgroundColor: Theme.of(context).primaryColor,
                           child: Text((position + 1)
-                              .toString()), // Show the first two leter of the map name
+                              .toString()),
                         ),
                       ]),
                   title: Text(this.boxList[position].box.name),
