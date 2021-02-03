@@ -189,8 +189,6 @@ class _LoginState extends State {
       user.password = passwordController.text;
       user.email = emailController.text;
     });
-    print(user.password);
-    print(user.email);
     if (user.email != "" && user.password != "") {
       UserApi.userAuthenticate(user, context).then((user) {
         if (user == null) {

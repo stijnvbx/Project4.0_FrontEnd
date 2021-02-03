@@ -135,7 +135,7 @@ class _HomePage extends State {
                         CircleAvatar(
                           backgroundColor: Theme.of(context).primaryColor,
                           child: Text((position + 1)
-                              .toString()), // Show the first two leter of the map name
+                              .toString()),
                         ),
                       ]),
                   title: Text(this.boxList[position].box.name),
