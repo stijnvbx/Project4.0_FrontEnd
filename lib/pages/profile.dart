@@ -1,3 +1,5 @@
+import 'package:flutter/services.dart';
+import 'package:flutter_bcrypt/flutter_bcrypt.dart';
 import 'package:project4_front_end/apis/user_api.dart';
 import 'package:project4_front_end/models/user.dart';
 import 'package:project4_front_end/widgets/bottomNavbar.dart';
@@ -35,6 +37,8 @@ class _ProfileState extends State {
 
   int _selectedIndex;
 
+  String _hash = 'Unknown';
+
   void _selectedTab(int index) {
     setState(() {
       _selectedIndex = index;
@@ -71,8 +75,6 @@ class _ProfileState extends State {
         onTabSelected: _selectedTab,
         items: [
           CustomAppBarItem(icon: Icons.home),
-          CustomAppBarItem(icon: Icons.graphic_eq),
-          CustomAppBarItem(icon: Icons.add_alert),
           CustomAppBarItem(icon: Icons.person),
         ],
       ),
@@ -305,14 +307,6 @@ class _ProfileState extends State {
     user.firstName = firstnameController.text;
     user.lastName = lastnameController.text;
     user.email = emailController.text;
-    if (passwordController1.text == passwordController2.text &&
-        user.password != passwordController1.text &&
-        user.password != passwordController2.text &&
-        passwordController1.text != "" &&
-        passwordController2.text != "") {
-      print("hallo");
-      user.password = passwordController1.text;
-    }
     user.address = addressController.text + " " + housenrController.text;
     user.postalCode = zipcodeController.text;
     user.city = cityController.text;
@@ -323,9 +317,10 @@ class _ProfileState extends State {
     print("address: " + user.address);
     print("postalCode: " + user.postalCode);
     print("city: " + user.city);
-    if (passwordController1.text != passwordController2.text &&
-            passwordController1.text != "" ||
-        passwordController2.text != "") {
+    if ((passwordController1.text != passwordController2.text &&
+        passwordController1.text == "") ||
+        (passwordController1.text != passwordController2.text &&
+        passwordController2.text == "")) {
       Flushbar(
         title: "Aanpassen mislukt",
         message: "de 2 wachtwoorden komen niet overeen.",
@@ -341,13 +336,10 @@ class _ProfileState extends State {
         housenrController.text != "") {
       UserApi.getUserEmail(user.email, token).then((userEmail) {
         if (userEmail.isEmpty || user.id == userEmail[0].id) {
-          UserApi.updateUser(user.id, user, token).then((result) {
-            Flushbar(
-              title: "Aanpassen gelukt",
-              message: "Je profiel is goed aangepast.",
-              duration: Duration(seconds: 2),
-            ).show(context);
-          });
+          print(passwordController1.text);
+          print(passwordController2.text);
+          print(user.password);
+          hash();
         } else {
           Flushbar(
             title: "Aanpassen mislukt",
@@ -412,5 +404,37 @@ class _ProfileState extends State {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('userID');
     prefs.remove('token');
+  }
+
+  Future<void> hash() async {
+    String hash;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+
+    if (passwordController1.text == passwordController2.text &&
+        passwordController1.text != "" &&
+        passwordController2.text != "") {
+      print("hallo");
+
+      try {
+        hash = await FlutterBcrypt.hashPw(
+            password: passwordController1.text,
+            salt: r'$2a$11$C6UzMDM.H6dfI/f/IKxGhu');
+        print("hash: " + hash);
+      } on PlatformException {
+        hash = 'Failed to get hash.';
+      }
+
+      if (!mounted) return;
+
+      user.password = hash;
+    }
+
+    UserApi.updateUser(user.id, user, token).then((result) {
+      Flushbar(
+        title: "Aanpassen gelukt",
+        message: "Je profiel is goed aangepast.",
+        duration: Duration(seconds: 2),
+      ).show(context);
+    });
   }
 }

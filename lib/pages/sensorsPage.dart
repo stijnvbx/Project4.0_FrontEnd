@@ -70,8 +70,8 @@ class _SensorsState extends State {
         onTabSelected: _selectedTab,
         items: [
           CustomAppBarItem(icon: Icons.home),
-          CustomAppBarItem(icon: Icons.graphic_eq),
-          CustomAppBarItem(icon: Icons.add_alert),
+          // CustomAppBarItem(icon: Icons.graphic_eq),
+          // CustomAppBarItem(icon: Icons.add_alert),
           CustomAppBarItem(icon: Icons.person),
         ],
       ),
