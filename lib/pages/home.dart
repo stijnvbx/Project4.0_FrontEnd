@@ -26,6 +26,8 @@ class _HomePage extends State {
   Location currentLocation;
   BoxUser boxUser;
   List<Location> currentLocations = [];
+  double lat;
+  double long;
 
   @override
   void initState() {
@@ -54,24 +56,52 @@ class _HomePage extends State {
       BoxUserApi.getBoxUsers(token).then((result) {
         setState(() {
           for (int i = 0; i < result.length; i++) {
-            if (!differentBoxes.contains(result[i].boxID)) {
+            if (!differentBoxes.contains(result[i].boxID) &&
+                result[i].locations.last.endDate == null) {
               differentBoxes.add(result[i].boxID);
               boxList.add(result[i]);
               print(differentBoxes.length);
             }
           }
+          // for (int a = 0; a < result.length; a++) {
+          //   if (!differentBoxes.contains(result[a].boxID)) {
+          //     differentBoxes.add(result[a].boxID);
+          //     boxList.add(result[a]);
+          //     print(differentBoxes.length);
+          //   }
+          // }
+          boxList.sort((a, b) {
+            return a.box.name.compareTo(b.box.name);
+          });
           count = boxList.length;
-          /*if (boxList != null) {
-            for (boxUser in boxList) {
-              if (boxUser.locations.isNotEmpty) {
-                for (currentLocation in boxUser.locations) {
-                  if (currentLocation.endDate == null) {
-                    currentLocations.add(currentLocation);
-                  }
+          if (boxList.isNotEmpty) {
+            for (int i = 0; i < count; i++) {
+              //print(boxList[i].locations.last.endDate);
+              currentLocations.add(boxList[i].locations.last);
+            }
+            for (int i = 0; i < currentLocations.length; i++) {
+              print(boxList[i].userID);
+              print("lat: " +
+                  currentLocations[i].latitude.toString() +
+                  " long: " +
+                  currentLocations[i].longitude.toString() +
+                  " endDate: " +
+                  currentLocations[i].id.toString());
+            }
+
+            for (int z = 0; z < count; z++) {
+              if (currentLocations.isNotEmpty) {
+                if (currentLocations[z].endDate == null) {
+                  lat = currentLocations[z].latitude;
+                  long = currentLocations[z].longitude;
+                } else {
+                  lat = 0.0;
+                  long = 0.0;
                 }
+                _getCoordinats(lat, long);
               }
             }
-          }*/
+          }
         });
       });
     } else {
@@ -81,18 +111,38 @@ class _HomePage extends State {
           count = boxList.length;
           if (boxList != null) {
             for (boxUser in boxList) {
-              if (boxUser.locations.isNotEmpty) {
-                for (currentLocation in boxUser.locations) {
-                  if (currentLocation.endDate == null) {
-                    currentLocations.add(currentLocation);
-                  }
-                }
+              if (boxUser.locations.isNotEmpty &&
+                  boxUser.locations.last.endDate == null) {
+                currentLocations.add(boxUser.locations.last);
+              }
+            }
+          }
+          for (int z = 0; z < count; z++) {
+            if (currentLocations.isNotEmpty) {
+              if (currentLocations[z].endDate == null) {
+                lat = currentLocations[z].latitude;
+                long = currentLocations[z].longitude;
+                _getCoordinats(lat, long);
               }
             }
           }
         });
       });
     }
+  }
+
+  _getCoordinats(double lat, double long) async {
+    var addresses;
+    var first;
+    addresses = await Geocoder.local
+        .findAddressesFromCoordinates(new Coordinates(lat, long));
+    first = addresses.first;
+
+    //print("${first.adminArea} : ${first.addressLine} : ${first.countryCode} : ${first.countryName} : ${first.locality} : ${first.postalCode} : ${first.subAdminArea} : ${first.subThoroughfare} : ${first.thoroughfare}");
+    setState(() {
+      locations.add(first.addressLine);
+      print(locations);
+    });
   }
 
   @override
@@ -133,7 +183,7 @@ class _HomePage extends State {
   }
 
   _boxListItems() {
-    if (boxList.isEmpty) {
+    if (boxList.isEmpty || locations.length != count) {
       // show a ProgressIndicator as long as there's no map info
       return Center(child: CircularProgressIndicator());
     } else if (boxList.isEmpty) {
@@ -147,14 +197,6 @@ class _HomePage extends State {
       return ListView.builder(
         itemCount: count,
         itemBuilder: (BuildContext context, int position) {
-          var lat = 0.0;
-          var long = 0.0;
-          if (this.boxList[position].locations.isNotEmpty &&
-              currentLocations.isNotEmpty) {
-            lat = currentLocations[position].latitude;
-            long = currentLocations[position].longitude;
-            _getCoordinats(lat, long);
-          }
           return Row(children: <Widget>[
             Flexible(
               child: Card(
@@ -181,7 +223,7 @@ class _HomePage extends State {
                             alignment: Alignment.centerLeft,
                             child: Text('geen locatie')),
                       SizedBox(height: 5),
-                      if (this.boxList[position].box.comment != null)
+                      if (this.boxList[position].box.comment.isNotEmpty)
                         Align(
                             alignment: Alignment.centerLeft,
                             child: Text(this.boxList[position].box.comment)),
@@ -211,15 +253,5 @@ class _HomePage extends State {
     if (result == true) {
       _getBoxes();
     }
-  }
-
-  _getCoordinats(double lat, double long) async {
-    var addresses = await Geocoder.local
-        .findAddressesFromCoordinates(new Coordinates(lat, long));
-    var first = addresses.first;
-    //print("${first.adminArea} : ${first.addressLine} : ${first.countryCode} : ${first.countryName} : ${first.locality} : ${first.postalCode} : ${first.subAdminArea} : ${first.subThoroughfare} : ${first.thoroughfare}");
-    setState(() {
-      locations.add("${first.addressLine}");
-    });
   }
 }
