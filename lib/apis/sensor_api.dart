@@ -1,10 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:project4_front_end/models/sensor.dart';
 
 class SensorApi {
-
   static String url = "https://project40backend2.azurewebsites.net/api/Sensor";
 
   // GET -> All sensors
@@ -19,10 +19,14 @@ class SensorApi {
   }
 
   // GET -> sensor
-  static Future<Sensor> getSensor(int id) async {
-    final response = await http.get(url + '/' + id.toString());
+  static Future<Sensor> getSensor(int id, String token) async {
+    final response = await http.get(
+      url + '/' + id.toString(),
+      headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
+    );
+    print(response.statusCode);
     if (response.statusCode == 200) {
-      return Sensor.fromJson(jsonDecode(response.body));
+      return Sensor.fromJsonWithSensorType(jsonDecode(response.body));
     } else {
       throw Exception('Failed to load sensor!');
     }
@@ -58,8 +62,7 @@ class SensorApi {
 
   // DELETE -> sensor
   static Future deleteSensor(int id) async {
-    final http.Response response =
-        await http.delete(url + '/' + id.toString());
+    final http.Response response = await http.delete(url + '/' + id.toString());
     if (response.statusCode == 200) {
       return;
     } else {
