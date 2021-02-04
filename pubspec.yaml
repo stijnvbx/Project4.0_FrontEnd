@@ -29,6 +29,8 @@ dependencies:
   line_chart: ^1.0.3
   geocoder: ^0.2.1
   charts_flutter: ^0.6.0
+  week_of_year: ^1.0.1
+  intl: ^0.15.2
   flutter_bcrypt: ^1.0.5
 
 
