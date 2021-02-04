@@ -39,6 +39,34 @@ class _GraphPage extends State {
   List<charts.Series<Temp, int>> _seriesWeekData = [];
   List<charts.Series<Temp, int>> _seriesMonthData = [];
 
+  //Custom labels voor dagen van week in grafiek
+  final customWeekFormatter = charts.BasicNumericTickFormatterSpec((num value) {
+    if (value == 0) {
+      return "Ma";
+    } else if (value == 1) {
+      return "Di";
+    } else if (value == 2) {
+      return "Wo";
+    } else if (value == 3) {
+      return "Do";
+    } else if (value == 4) {
+      return "Vr";
+    } else if (value == 5) {
+      return "Za";
+    } else if (value == 6) {
+      return "Zo";
+    }
+  });
+
+  //Custom labels voor de dagen van de maand zodat deze bij nul beginnen te tellen maar de klant ziet het niet
+
+  final customMonthFormatter =
+      charts.BasicNumericTickFormatterSpec((num value) {
+    value += 1;
+
+    return value.toInt().toString();
+  });
+
   void _selectedTab(int index) {
     setState(() {
       _selectedIndex = index;
@@ -78,15 +106,9 @@ class _GraphPage extends State {
           String hour = m.timestamp.split('T')[1].split(':')[0];
 
           if (today == measurementDate) {
-            print("Hour: " + hour.toString() + " value: " + m.value);
             if (perHourList.isEmpty) {
-              print("LIJST LEEG");
               perHourList.add(new Temp(int.parse(hour), double.parse(m.value)));
             } else if (int.parse(hour) == perHourList.last.timestamp) {
-              print("TESTEN of tijd gelijk is: " +
-                  int.parse(hour).toString() +
-                  " " +
-                  perHourList.last.timestamp.toString());
               perHourList.add(new Temp(int.parse(hour), double.parse(m.value)));
             } else {
               double value = 0.0;
@@ -117,7 +139,7 @@ class _GraphPage extends State {
             charts.Series(
               colorFn: (__, _) =>
                   charts.ColorUtil.fromDartColor(Color(0xff990099)),
-              id: 'Lucht',
+              id: 'Meting',
               data: lineDayData,
               domainFn: (Temp temperature, _) => temperature.timestamp,
               measureFn: (Temp temperature, _) => temperature.value,
@@ -217,7 +239,7 @@ class _GraphPage extends State {
                   charts.ColorUtil.fromDartColor(Color(0xff990011)),
               id: 'Dag',
               data: lineDayTempData,
-              domainFn: (Temp temperature, _) => temperature.timestamp,
+              domainFn: (Temp temperature, _) => temperature.timestamp - 1,
               measureFn: (Temp temperature, _) => temperature.value,
             ),
           );
@@ -230,7 +252,7 @@ class _GraphPage extends State {
                   charts.ColorUtil.fromDartColor(Color(0xff056050)),
               id: 'Nacht',
               data: lineNightTempData,
-              domainFn: (Temp temperature, _) => temperature.timestamp,
+              domainFn: (Temp temperature, _) => temperature.timestamp - 1,
               measureFn: (Temp temperature, _) => temperature.value,
             ),
           );
@@ -323,34 +345,34 @@ class _GraphPage extends State {
               }
             }
           }
-          // for (Temp l in lineDayTempData) {
-          //   print("Dag lijst: " + l.value.toString());
-          // }
+        }
+        // for (Temp l in lineDayTempData) {
+        //   print("Dag lijst: " + l.value.toString());
+        // }
 
-          if (lineDayTempData.isNotEmpty) {
-            _seriesMonthData.add(
-              charts.Series(
-                colorFn: (__, _) =>
-                    charts.ColorUtil.fromDartColor(Color(0xff990011)),
-                id: 'Dag',
-                data: lineDayTempData,
-                domainFn: (Temp temperature, _) => temperature.timestamp,
-                measureFn: (Temp temperature, _) => temperature.value,
-              ),
-            );
-          }
-          if (lineNightTempData.isNotEmpty) {
-            _seriesMonthData.add(
-              charts.Series(
-                colorFn: (__, _) =>
-                    charts.ColorUtil.fromDartColor(Color(0xff056050)),
-                id: 'Nacht',
-                data: lineNightTempData,
-                domainFn: (Temp temperature, _) => temperature.timestamp,
-                measureFn: (Temp temperature, _) => temperature.value,
-              ),
-            );
-          }
+        if (lineDayTempData.isNotEmpty) {
+          _seriesMonthData.add(
+            charts.Series(
+              colorFn: (__, _) =>
+                  charts.ColorUtil.fromDartColor(Color(0xff990011)),
+              id: 'Dag',
+              data: lineDayTempData,
+              domainFn: (Temp temperature, _) => temperature.timestamp - 1,
+              measureFn: (Temp temperature, _) => temperature.value,
+            ),
+          );
+        }
+        if (lineNightTempData.isNotEmpty) {
+          _seriesMonthData.add(
+            charts.Series(
+              colorFn: (__, _) =>
+                  charts.ColorUtil.fromDartColor(Color(0xff056050)),
+              id: 'Nacht',
+              data: lineNightTempData,
+              domainFn: (Temp temperature, _) => temperature.timestamp - 1,
+              measureFn: (Temp temperature, _) => temperature.value,
+            ),
+          );
         }
       });
     });
@@ -394,9 +416,9 @@ class _GraphPage extends State {
   _tempListItems() {
     if (valList == null ||
         sensor == null ||
-        _seriesDayData == null ||
-        _seriesWeekData == null ||
-        _seriesMonthData == null) {
+        _seriesDayData.isEmpty ||
+        _seriesWeekData.isEmpty ||
+        _seriesMonthData.isEmpty) {
       // show a ProgressIndicator as long as there's no map info
       return Center(child: CircularProgressIndicator());
     } else {
@@ -425,57 +447,47 @@ class _GraphPage extends State {
                   child: Center(
                     child: Column(
                       children: <Widget>[
-                        if (_seriesDayData.isEmpty)
-                          Text(
-                            'Nog geen metingen vandaag',
-                            style: TextStyle(
-                                fontSize: 24.0, fontWeight: FontWeight.bold),
+                        Text(
+                          'Metingen van vandaag',
+                          style: TextStyle(
+                              fontSize: 24.0, fontWeight: FontWeight.bold),
+                        ),
+                        Expanded(
+                          child: charts.LineChart(
+                            _seriesDayData,
+                            defaultRenderer: new charts.LineRendererConfig(
+                                includeArea: false, stacked: false),
+                            animate: true,
+                            animationDuration: Duration(seconds: 1),
+                            behaviors: [
+                              new charts.ChartTitle('Uur van de dag',
+                                  behaviorPosition:
+                                      charts.BehaviorPosition.bottom,
+                                  titleOutsideJustification: charts
+                                      .OutsideJustification.middleDrawArea),
+                              new charts.ChartTitle(
+                                  sensor.sensorType.name +
+                                      ' in ' +
+                                      sensor.sensorType.unit,
+                                  behaviorPosition:
+                                      charts.BehaviorPosition.start,
+                                  titleOutsideJustification: charts
+                                      .OutsideJustification.middleDrawArea),
+                            ],
+                            domainAxis: new charts.NumericAxisSpec(
+                                viewport: new charts.NumericExtents(0, 24),
+                                tickProviderSpec:
+                                    new charts.BasicNumericTickProviderSpec(
+                                        zeroBound: true, desiredTickCount: 12)),
+                            primaryMeasureAxis: new charts.NumericAxisSpec(
+                                tickProviderSpec:
+                                    new charts.BasicNumericTickProviderSpec(
+                              zeroBound: true,
+                              desiredMinTickCount: 10,
+                              desiredMaxTickCount: 20,
+                            )),
                           ),
-                        if (_seriesDayData.isNotEmpty)
-                          Text(
-                            'Metingen van vandaag',
-                            style: TextStyle(
-                                fontSize: 24.0, fontWeight: FontWeight.bold),
-                          ),
-                        if (_seriesDayData.isNotEmpty)
-                          Expanded(
-                            child: charts.LineChart(
-                              _seriesDayData,
-                              defaultRenderer: new charts.LineRendererConfig(
-                                  includeArea: false, stacked: false),
-                              animate: true,
-                              animationDuration: Duration(seconds: 1),
-                              behaviors: [
-                                new charts.ChartTitle('Uur van de dag',
-                                    behaviorPosition:
-                                        charts.BehaviorPosition.bottom,
-                                    titleOutsideJustification: charts
-                                        .OutsideJustification.middleDrawArea),
-                                new charts.ChartTitle(
-                                    sensor.sensorType.name +
-                                        ' in ' +
-                                        sensor.sensorType.unit,
-                                    behaviorPosition:
-                                        charts.BehaviorPosition.start,
-                                    titleOutsideJustification: charts
-                                        .OutsideJustification.middleDrawArea),
-                              ],
-                              domainAxis: new charts.NumericAxisSpec(
-                                  viewport: new charts.NumericExtents(0, 24),
-                                  tickProviderSpec:
-                                      new charts.BasicNumericTickProviderSpec(
-                                          zeroBound: true,
-                                          desiredMinTickCount: 12,
-                                          desiredMaxTickCount: 24)),
-                              primaryMeasureAxis: new charts.NumericAxisSpec(
-                                  tickProviderSpec:
-                                      new charts.BasicNumericTickProviderSpec(
-                                zeroBound: true,
-                                desiredMinTickCount: 10,
-                                desiredMaxTickCount: 20,
-                              )),
-                            ),
-                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -487,56 +499,52 @@ class _GraphPage extends State {
                   child: Center(
                     child: Column(
                       children: <Widget>[
-                        if (_seriesWeekData.isEmpty)
-                          Text(
-                            'Nog geen metingen deze week',
-                            style: TextStyle(
-                                fontSize: 24.0, fontWeight: FontWeight.bold),
-                          ),
-                        if (_seriesWeekData.isNotEmpty)
-                          Text(
-                            'Metingen van deze week',
-                            style: TextStyle(
-                                fontSize: 24.0, fontWeight: FontWeight.bold),
-                          ),
-                        if (_seriesWeekData.isNotEmpty)
-                          Expanded(
-                            child: charts.LineChart(
-                              _seriesWeekData,
-                              defaultRenderer: new charts.LineRendererConfig(
-                                  includeArea: false, stacked: false),
-                              animate: true,
-                              animationDuration: Duration(seconds: 1),
-                              behaviors: [
-                                new charts.ChartTitle('Dag van de week',
-                                    behaviorPosition:
-                                        charts.BehaviorPosition.bottom,
-                                    titleOutsideJustification: charts
-                                        .OutsideJustification.middleDrawArea),
-                                new charts.ChartTitle(
-                                    sensor.sensorType.name +
-                                        ' in ' +
-                                        sensor.sensorType.unit,
-                                    behaviorPosition:
-                                        charts.BehaviorPosition.start,
-                                    titleOutsideJustification: charts
-                                        .OutsideJustification.middleDrawArea),
-                              ],
-                              domainAxis: new charts.NumericAxisSpec(
-                                  viewport: new charts.NumericExtents(1, 7),
-                                  tickProviderSpec:
-                                      new charts.BasicNumericTickProviderSpec(
-                                    zeroBound: true,
-                                    desiredTickCount: 14,
-                                  )),
-                              primaryMeasureAxis: new charts.NumericAxisSpec(
-                                  tickProviderSpec:
-                                      new charts.BasicNumericTickProviderSpec(
+                        Text(
+                          'Metingen van deze week',
+                          style: TextStyle(
+                              fontSize: 24.0, fontWeight: FontWeight.bold),
+                        ),
+                        Expanded(
+                          child: charts.LineChart(
+                            _seriesWeekData,
+                            defaultRenderer: new charts.LineRendererConfig(
+                                includeArea: false, stacked: false),
+                            animate: true,
+                            animationDuration: Duration(seconds: 1),
+                            behaviors: [
+                              new charts.ChartTitle('Dag van de week',
+                                  behaviorPosition:
+                                      charts.BehaviorPosition.bottom,
+                                  titleOutsideJustification: charts
+                                      .OutsideJustification.middleDrawArea),
+                              new charts.ChartTitle(
+                                  sensor.sensorType.name +
+                                      ' in ' +
+                                      sensor.sensorType.unit,
+                                  behaviorPosition:
+                                      charts.BehaviorPosition.start,
+                                  titleOutsideJustification: charts
+                                      .OutsideJustification.middleDrawArea),
+                              new charts.SeriesLegend()
+                            ],
+                            domainAxis: new charts.NumericAxisSpec(
+                              viewport: new charts.NumericExtents(0, 6),
+                              tickProviderSpec:
+                                  new charts.BasicNumericTickProviderSpec(
                                 zeroBound: true,
-                                desiredTickCount: 7,
-                              )),
+                                desiredTickCount: 14,
+                              ),
+                              tickFormatterSpec: customWeekFormatter,
                             ),
+                            primaryMeasureAxis: new charts.NumericAxisSpec(
+                                tickProviderSpec:
+                                    new charts.BasicNumericTickProviderSpec(
+                              zeroBound: true,
+                              desiredMinTickCount: 10,
+                              desiredMaxTickCount: 20,
+                            )),
                           ),
+                        ),
                       ],
                     ),
                   ),
@@ -548,56 +556,50 @@ class _GraphPage extends State {
                   child: Center(
                     child: Column(
                       children: <Widget>[
-                        if (_seriesMonthData.isEmpty)
-                          Text(
-                            'Nog geen metingen deze maand',
-                            style: TextStyle(
-                                fontSize: 24.0, fontWeight: FontWeight.bold),
-                          ),
-                        if (_seriesMonthData.isNotEmpty)
-                          Text(
-                            'Metingen van deze maand',
-                            style: TextStyle(
-                                fontSize: 24.0, fontWeight: FontWeight.bold),
-                          ),
-                        if (_seriesMonthData.isNotEmpty)
-                          Expanded(
-                            child: charts.LineChart(
-                              _seriesMonthData,
-                              defaultRenderer: new charts.LineRendererConfig(
-                                  includeArea: false, stacked: false),
-                              animate: true,
-                              animationDuration: Duration(seconds: 1),
-                              behaviors: [
-                                new charts.ChartTitle('Dag van de maand',
-                                    behaviorPosition:
-                                        charts.BehaviorPosition.bottom,
-                                    titleOutsideJustification: charts
-                                        .OutsideJustification.middleDrawArea),
-                                new charts.ChartTitle(
-                                    sensor.sensorType.name +
-                                        ' in ' +
-                                        sensor.sensorType.unit,
-                                    behaviorPosition:
-                                        charts.BehaviorPosition.start,
-                                    titleOutsideJustification: charts
-                                        .OutsideJustification.middleDrawArea),
-                              ],
-                              domainAxis: new charts.NumericAxisSpec(
-                                  viewport: new charts.NumericExtents(1, 31),
-                                  tickProviderSpec:
-                                      new charts.BasicNumericTickProviderSpec(
-                                          zeroBound: true,
-                                          desiredTickCount: 32)),
-                              primaryMeasureAxis: new charts.NumericAxisSpec(
-                                  tickProviderSpec:
-                                      new charts.BasicNumericTickProviderSpec(
-                                zeroBound: true,
-                                desiredMinTickCount: 10,
-                                desiredMaxTickCount: 20,
-                              )),
+                        Text(
+                          'Metingen van deze maand',
+                          style: TextStyle(
+                              fontSize: 24.0, fontWeight: FontWeight.bold),
+                        ),
+                        Expanded(
+                          child: charts.LineChart(
+                            _seriesMonthData,
+                            defaultRenderer: new charts.LineRendererConfig(
+                                includeArea: false, stacked: false),
+                            animate: true,
+                            animationDuration: Duration(seconds: 1),
+                            behaviors: [
+                              new charts.ChartTitle('Dag van de maand',
+                                  behaviorPosition:
+                                      charts.BehaviorPosition.bottom,
+                                  titleOutsideJustification: charts
+                                      .OutsideJustification.middleDrawArea),
+                              new charts.ChartTitle(
+                                  sensor.sensorType.name +
+                                      ' in ' +
+                                      sensor.sensorType.unit,
+                                  behaviorPosition:
+                                      charts.BehaviorPosition.start,
+                                  titleOutsideJustification: charts
+                                      .OutsideJustification.middleDrawArea),
+                              new charts.SeriesLegend()
+                            ],
+                            domainAxis: new charts.NumericAxisSpec(
+                              viewport: new charts.NumericExtents(0, 30),
+                              tickProviderSpec:
+                                  new charts.BasicNumericTickProviderSpec(
+                                      zeroBound: true, desiredTickCount: 16),
+                              tickFormatterSpec: customMonthFormatter,
                             ),
+                            primaryMeasureAxis: new charts.NumericAxisSpec(
+                                tickProviderSpec:
+                                    new charts.BasicNumericTickProviderSpec(
+                              zeroBound: true,
+                              desiredMinTickCount: 10,
+                              desiredMaxTickCount: 20,
+                            )),
                           ),
+                        ),
                       ],
                     ),
                   ),
