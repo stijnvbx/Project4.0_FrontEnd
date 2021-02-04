@@ -1,3 +1,5 @@
+import 'package:project4_front_end/models/user_type.dart';
+
 class User {
   int id;
   String firstName;
@@ -9,6 +11,7 @@ class User {
   String city;
   int userTypeID;
   String token;
+  UserType userType;
 
   User(
       {this.id,
@@ -20,7 +23,8 @@ class User {
       this.postalCode,
       this.city,
       this.userTypeID,
-      this.token});
+      this.token,
+      this.userType});
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
@@ -33,7 +37,24 @@ class User {
         postalCode: json['postalCode'],
         city: json['city'],
         userTypeID: json['userTypeID'],
-        token: json['token']);
+        token: json['token'],
+        );
+  }
+
+  factory User.fromJsonWithUserType(Map<String, dynamic> json) {
+    return User(
+        id: json['userID'],
+        firstName: json['firstName'],
+        lastName: json['lastName'],
+        password: json['password'],
+        email: json['email'],
+        address: json['address'],
+        postalCode: json['postalCode'],
+        city: json['city'],
+        userTypeID: json['userTypeID'],
+        token: json['token'],
+        userType: UserType.fromJson(json['userType'])
+    );
   }
 
   Map<String, dynamic> toJson() => {

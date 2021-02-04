@@ -165,6 +165,7 @@ class _LoginState extends State {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt('userID', user.id);
     prefs.setString('token', user.token);
+    prefs.setString('userTypeName', user.userType.userTypeName);
   }
 
   getData() async {
@@ -194,7 +195,7 @@ class _LoginState extends State {
         if (user == null) {
           Flushbar(
             title: "Aanmelden mislukt",
-            message: "Je e-meil of wachtwoord is fout.",
+            message: "Je e-mail of wachtwoord is fout.",
             duration: Duration(seconds: 2),
           ).show(context);
         } else {
