@@ -122,6 +122,7 @@ class _HomePage extends State {
               if (currentLocations[z].endDate == null) {
                 lat = currentLocations[z].latitude;
                 long = currentLocations[z].longitude;
+                print("lat: " + lat.toString() + " long: " + long.toString());
                 _getCoordinats(lat, long);
               }
             }
