@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:project4_front_end/pages/home.dart';
 import 'package:project4_front_end/pages/login.dart';
 import 'package:project4_front_end/pages/profile.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   // HttpOverrides.global = new MyHttpOverrides();
