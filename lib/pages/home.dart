@@ -16,10 +16,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePage extends State {
-  List<BoxUser> boxList;
+  List<BoxUser> boxList = [];
   int count = 0;
+  List<int> differentBoxes = [];
   int userID;
   String token;
+  String userTypeName;
   List<String> locations = [];
   Location currentLocation;
   BoxUser boxUser;
@@ -43,25 +45,54 @@ class _HomePage extends State {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     userID = prefs.getInt('userID');
     token = prefs.getString('token');
+    userTypeName = prefs.getString('userTypeName');
     print(userID);
     print(token);
-    await BoxUserApi.getBoxUserWithUserId(userID, token).then((result) {
-      setState(() {
-        boxList = result;
-        count = boxList.length;
-        if (boxList != null) {
-          for (boxUser in boxList) {
-            if (boxUser.locations.isNotEmpty) {
-              for (currentLocation in boxUser.locations) {
-                if (currentLocation.endDate == null) {
-                  currentLocations.add(currentLocation);
+    print(userTypeName);
+    if (userTypeName == "Monteur") {
+      print("test");
+      BoxUserApi.getBoxUsers(token).then((result) {
+        setState(() {
+          for (int i = 0; i < result.length; i++) {
+            if (!differentBoxes.contains(result[i].boxID)) {
+              differentBoxes.add(result[i].boxID);
+              boxList.add(result[i]);
+              print(differentBoxes.length);
+            }
+          }
+          count = boxList.length;
+          /*if (boxList != null) {
+            for (boxUser in boxList) {
+              if (boxUser.locations.isNotEmpty) {
+                for (currentLocation in boxUser.locations) {
+                  if (currentLocation.endDate == null) {
+                    currentLocations.add(currentLocation);
+                  }
+                }
+              }
+            }
+          }*/
+        });
+      });
+    } else {
+      BoxUserApi.getBoxUserWithUserId(userID, token).then((result) {
+        setState(() {
+          boxList = result;
+          count = boxList.length;
+          if (boxList != null) {
+            for (boxUser in boxList) {
+              if (boxUser.locations.isNotEmpty) {
+                for (currentLocation in boxUser.locations) {
+                  if (currentLocation.endDate == null) {
+                    currentLocations.add(currentLocation);
+                  }
                 }
               }
             }
           }
-        }
+        });
       });
-    });
+    }
   }
 
   @override
@@ -102,7 +133,7 @@ class _HomePage extends State {
   }
 
   _boxListItems() {
-    if (boxList == null) {
+    if (boxList.isEmpty) {
       // show a ProgressIndicator as long as there's no map info
       return Center(child: CircularProgressIndicator());
     } else if (boxList.isEmpty) {
@@ -118,7 +149,8 @@ class _HomePage extends State {
         itemBuilder: (BuildContext context, int position) {
           var lat = 0.0;
           var long = 0.0;
-          if (this.boxList[position].locations.isNotEmpty) {
+          if (this.boxList[position].locations.isNotEmpty &&
+              currentLocations.isNotEmpty) {
             lat = currentLocations[position].latitude;
             long = currentLocations[position].longitude;
             _getCoordinats(lat, long);
@@ -134,8 +166,7 @@ class _HomePage extends State {
                       children: <Widget>[
                         CircleAvatar(
                           backgroundColor: Theme.of(context).primaryColor,
-                          child: Text((position + 1)
-                              .toString()),
+                          child: Text((position + 1).toString()),
                         ),
                       ]),
                   title: Text(this.boxList[position].box.name),

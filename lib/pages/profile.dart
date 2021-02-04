@@ -95,7 +95,7 @@ class _ProfileState extends State {
       passwordController1.text;
       passwordController2.text;
       addressController.text = addressSplit[0];
-      if(addressSplit[1] != null){
+      if(addressSplit.length == 2){
         housenrController.text = addressSplit[1];
       } else {
         housenrController.text = "";
@@ -410,6 +410,7 @@ class _ProfileState extends State {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('userID');
     prefs.remove('token');
+    prefs.remove('userTypeName');
   }
 
   Future<void> hash() async {
