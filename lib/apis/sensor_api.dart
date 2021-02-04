@@ -22,7 +22,7 @@ class SensorApi {
   static Future<Sensor> getSensor(int id) async {
     final response = await http.get(url + '/' + id.toString());
     if (response.statusCode == 200) {
-      return Sensor.fromJson(jsonDecode(response.body));
+      return Sensor.fromJsonWithSensorType(jsonDecode(response.body));
     } else {
       throw Exception('Failed to load sensor!');
     }

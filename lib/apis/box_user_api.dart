@@ -9,12 +9,13 @@ class BoxUserApi {
   static String url = "https://project40backend2.azurewebsites.net/api/BoxUser";
 
   // GET -> All boxUsers
-  static Future<List<BoxUser>> getBoxUsers() async {
-    final response = await http.get(url);
+  static Future<List<BoxUser>> getBoxUsers(String token) async {
+    final response = await http.get(url,
+    headers: {HttpHeaders.authorizationHeader: "Bearer $token"},);
     print(response.statusCode);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
-      return jsonResponse.map((boxUser) => new BoxUser.fromJson(boxUser)).toList();
+      return jsonResponse.map((boxUser) => new BoxUser.fromJsonWithBoxAndLocations(boxUser)).toList();
     } else {
       throw Exception('Failed to load boxUsers!');
     }

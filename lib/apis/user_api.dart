@@ -66,7 +66,7 @@ class UserApi {
     );
     print(response.statusCode);
     if (response.statusCode == 200) {
-      return User.fromJson(jsonDecode(response.body));
+      return User.fromJsonWithUserType(jsonDecode(response.body));
     } else {
       Flushbar(
             title: "Aanmelden mislukt",
