@@ -425,7 +425,7 @@ class _GraphPage extends State {
           appBar: AppBar(
             backgroundColor: Theme.of(context).primaryColor,
             bottom: TabBar(
-              indicatorColor: Color(0xFF000000),
+              indicatorColor: Colors.black,
               tabs: [
                 Tab(
                   icon: Icon(FontAwesomeIcons.dailymotion),
