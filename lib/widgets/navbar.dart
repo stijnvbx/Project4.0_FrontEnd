@@ -26,7 +26,9 @@ class _NavbarState extends State<Navbar> {
         Flexible(
           child: Text(
             widget.tabName.toString(),
-            style: TextStyle(color: Color(0xFF320331)),
+            style: TextStyle(
+              color: Colors.black,
+            ),
           ),
         ),
         Flexible(
@@ -35,7 +37,7 @@ class _NavbarState extends State<Navbar> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
               child: Image.asset(
-                'assets/logo_vito.jpg',
+                'assets/logo_vito.png',
                 height: 45.0,
                 fit: BoxFit.fill,
               ),
