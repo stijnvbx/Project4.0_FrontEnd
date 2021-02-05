@@ -138,7 +138,7 @@ class _GraphPage extends State {
           _seriesDayData.add(
             charts.Series(
               colorFn: (__, _) =>
-                  charts.ColorUtil.fromDartColor(Color(0xff990099)),
+                  charts.ColorUtil.fromDartColor(Color(0xff109618)),
               id: 'Meting',
               data: lineDayData,
               domainFn: (Temp temperature, _) => temperature.timestamp,
@@ -236,7 +236,7 @@ class _GraphPage extends State {
           _seriesWeekData.add(
             charts.Series(
               colorFn: (__, _) =>
-                  charts.ColorUtil.fromDartColor(Color(0xff990011)),
+                  charts.ColorUtil.fromDartColor(Color(0xff990000)),
               id: 'Dag',
               data: lineDayTempData,
               domainFn: (Temp temperature, _) => temperature.timestamp - 1,
@@ -249,7 +249,7 @@ class _GraphPage extends State {
           _seriesWeekData.add(
             charts.Series(
               colorFn: (__, _) =>
-                  charts.ColorUtil.fromDartColor(Color(0xff056050)),
+                  charts.ColorUtil.fromDartColor(Color(0xff3366cc)),
               id: 'Nacht',
               data: lineNightTempData,
               domainFn: (Temp temperature, _) => temperature.timestamp - 1,
@@ -346,9 +346,6 @@ class _GraphPage extends State {
             }
           }
         }
-        // for (Temp l in lineDayTempData) {
-        //   print("Dag lijst: " + l.value.toString());
-        // }
 
         if (lineDayTempData.isNotEmpty) {
           _seriesMonthData.add(
@@ -366,7 +363,7 @@ class _GraphPage extends State {
           _seriesMonthData.add(
             charts.Series(
               colorFn: (__, _) =>
-                  charts.ColorUtil.fromDartColor(Color(0xff056050)),
+                  charts.ColorUtil.fromDartColor(Color(0xff3366cc)),
               id: 'Nacht',
               data: lineNightTempData,
               domainFn: (Temp temperature, _) => temperature.timestamp - 1,
@@ -428,7 +425,7 @@ class _GraphPage extends State {
           appBar: AppBar(
             backgroundColor: Theme.of(context).primaryColor,
             bottom: TabBar(
-              indicatorColor: Color(0xff9962D0),
+              indicatorColor: Color(0xFF000000),
               tabs: [
                 Tab(
                   icon: Icon(FontAwesomeIcons.dailymotion),
