@@ -95,6 +95,9 @@ class _GraphPage extends State {
     MeasurementApi.getMeasurementsFromSensor(id, token).then((result) {
       setState(() {
         valList = result;
+        valList.sort((a, b) {
+            return a.id.compareTo(b.id);
+          });
         int counter = 0;
         var lineDayData = <Temp>[];
         List<Temp> perHourList = [];
@@ -154,6 +157,9 @@ class _GraphPage extends State {
     MeasurementApi.getMeasurementsFromSensor(id, token).then((result) {
       setState(() {
         valList = result;
+        valList.sort((a, b) {
+            return a.id.compareTo(b.id);
+          });
         List<Temp> perDayList = [];
         List<Temp> perNightList = [];
 
@@ -265,6 +271,9 @@ class _GraphPage extends State {
     MeasurementApi.getMeasurementsFromSensor(id, token).then((result) {
       setState(() {
         valList = result;
+        valList.sort((a, b) {
+            return a.id.compareTo(b.id);
+          });
         List<Temp> perDayList = [];
         List<Temp> perNightList = [];
 
@@ -425,7 +434,7 @@ class _GraphPage extends State {
           appBar: AppBar(
             backgroundColor: Theme.of(context).primaryColor,
             bottom: TabBar(
-              indicatorColor: Colors.black,
+              indicatorColor: Color(0xFF000000),
               tabs: [
                 Tab(
                   icon: Icon(FontAwesomeIcons.dailymotion),
