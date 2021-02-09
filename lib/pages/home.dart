@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePage extends State {
-  List<BoxUser> boxList = [];
+  List<BoxUser> boxList;
   int count = 0;
   List<int> differentBoxes = [];
   int userID;
@@ -55,6 +55,7 @@ class _HomePage extends State {
       print("test");
       BoxUserApi.getBoxUsers(token).then((result) {
         setState(() {
+          boxList = [];
           for (int i = 0; i < result.length; i++) {
             if (!differentBoxes.contains(result[i].boxID) &&
                 result[i].locations.last.endDate == null) {
@@ -184,7 +185,7 @@ class _HomePage extends State {
   }
 
   _boxListItems() {
-    if (boxList.isEmpty || locations.length != count) {
+    if (boxList == null) {
       // show a ProgressIndicator as long as there's no map info
       return Center(child: CircularProgressIndicator());
     } else if (boxList.isEmpty) {
@@ -215,7 +216,7 @@ class _HomePage extends State {
                   title: Text(this.boxList[position].box.name),
                   subtitle: Column(
                     children: [
-                      if (locations.isNotEmpty)
+                      if (locations.length == count)
                         Align(
                             alignment: Alignment.centerLeft,
                             child: Text(locations[position])),
