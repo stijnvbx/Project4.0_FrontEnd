@@ -96,8 +96,8 @@ class _GraphPage extends State {
       setState(() {
         valList = result;
         valList.sort((a, b) {
-            return a.id.compareTo(b.id);
-          });
+          return a.timestamp.compareTo(b.timestamp);
+        });
         int counter = 0;
         var lineDayData = <Temp>[];
         List<Temp> perHourList = [];
@@ -158,8 +158,8 @@ class _GraphPage extends State {
       setState(() {
         valList = result;
         valList.sort((a, b) {
-            return a.id.compareTo(b.id);
-          });
+          return a.timestamp.compareTo(b.timestamp);
+        });
         List<Temp> perDayList = [];
         List<Temp> perNightList = [];
 
@@ -272,8 +272,8 @@ class _GraphPage extends State {
       setState(() {
         valList = result;
         valList.sort((a, b) {
-            return a.id.compareTo(b.id);
-          });
+          return a.timestamp.compareTo(b.timestamp);
+        });
         List<Temp> perDayList = [];
         List<Temp> perNightList = [];
 
