@@ -43,7 +43,7 @@ class _SensorsState extends State {
       setState(() {
         box = result;
         count = box.sensorBoxes.length;
-        boxName = "- " + box.name;
+        boxName = box.name;
         print("test: " + box.toString());
       });
     });
@@ -52,7 +52,7 @@ class _SensorsState extends State {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: Navbar(tabName: 'Sensoren $boxName'),
+      appBar: Navbar(tabName: '$boxName'),
       body: _sensorList(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Container(
