@@ -9,8 +9,8 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="project4_front_end"
-        android:icon="@mipmap/ic_launcher">
+        android:label="B.B.B"
+        android:icon="@mipmap/app_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
