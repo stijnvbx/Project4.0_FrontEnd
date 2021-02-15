@@ -172,7 +172,6 @@ class _LoginState extends State {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       userID = prefs.getInt('userID');
-      print("test: " + userID.toString());
       if (userID != null) {
         Navigator.pushNamedAndRemoveUntil(
             context, HomePage.routeName, (_) => false);

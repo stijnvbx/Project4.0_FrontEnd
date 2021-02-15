@@ -366,7 +366,6 @@ class _ProfileState extends State {
               child: Text('Ja'),
               onPressed: () {
                 Navigator.of(context).pop();
-                print("log out!");
                 clearUserID();
                 Navigator.pushNamedAndRemoveUntil(
                     context, Login.routeName, (_) => false);
@@ -381,7 +380,6 @@ class _ProfileState extends State {
               child: Text('Nee'),
               onPressed: () {
                 Navigator.of(context).pop();
-                print("Don't log out!");
               },
             ),
           ],
@@ -404,13 +402,11 @@ class _ProfileState extends State {
     if (passwordController1.text == passwordController2.text &&
         passwordController1.text != "" &&
         passwordController2.text != "") {
-      print("hallo");
 
       try {
         hash = await FlutterBcrypt.hashPw(
             password: passwordController1.text,
             salt: r'$2a$11$C6UzMDM.H6dfI/f/IKxGhu');
-        print("hash: " + hash);
       } on PlatformException {
         hash = 'Failed to get hash.';
       }
@@ -419,14 +415,6 @@ class _ProfileState extends State {
 
       user.password = hash;
     }
-
-    print("firstName: " + user.firstName);
-    print("lastName: " + user.lastName);
-    print("email: " + user.email);
-    print("password: " + user.password);
-    print("address: " + user.address);
-    print("postalCode: " + user.postalCode);
-    print("city: " + user.city);
 
     UserApi.updateUser(user.id, user, token).then((result) {
       Flushbar(

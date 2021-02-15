@@ -24,7 +24,6 @@ class SensorApi {
       url + '/' + id.toString(),
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
     );
-    print(response.statusCode);
     if (response.statusCode == 200) {
       return Sensor.fromJsonWithSensorType(jsonDecode(response.body));
     } else {
@@ -57,7 +56,6 @@ class SensorApi {
       },
       body: jsonEncode(sensor),
     );
-    print("statusCode: " + response.statusCode.toString());
   }
 
   // DELETE -> sensor
