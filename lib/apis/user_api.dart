@@ -68,7 +68,7 @@ class UserApi {
     } else {
       Flushbar(
             title: "Aanmelden mislukt",
-            message: "Je e-meil of wachtwoord is fout.",
+            message: "Je e-mail of wachtwoord is fout.",
             duration: Duration(seconds: 2),
           ).show(context);
       throw Exception('Failed to login!');
