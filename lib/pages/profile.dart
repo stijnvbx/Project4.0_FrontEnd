@@ -95,7 +95,7 @@ class _ProfileState extends State {
       passwordController1.text;
       passwordController2.text;
       addressController.text = addressSplit[0];
-      if(addressSplit.length == 2){
+      if (addressSplit.length == 2) {
         housenrController.text = addressSplit[1];
       } else {
         housenrController.text = "";
@@ -264,6 +264,7 @@ class _ProfileState extends State {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                   onPressed: () {
                     _showMyDialog();
                   },
@@ -275,6 +276,7 @@ class _ProfileState extends State {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                   onPressed: () {
                     _edit();
                   },
@@ -296,14 +298,6 @@ class _ProfileState extends State {
         // call the api to fetch the user data
         setState(() {
           user = result;
-          print("test: " + user.toString());
-          print("firstName: " + user.firstName);
-          print("lastName: " + user.lastName);
-          print("email: " + user.email);
-          print("password: " + user.password);
-          print("address: " + user.address);
-          print("postalCode: " + user.postalCode);
-          print("city: " + user.city);
         });
       });
     }
@@ -316,17 +310,10 @@ class _ProfileState extends State {
     user.address = addressController.text + " " + housenrController.text;
     user.postalCode = zipcodeController.text;
     user.city = cityController.text;
-    print("firstName: " + user.firstName);
-    print("lastName: " + user.lastName);
-    print("email: " + user.email);
-    print("password: " + user.password);
-    print("address: " + user.address);
-    print("postalCode: " + user.postalCode);
-    print("city: " + user.city);
     if ((passwordController1.text != passwordController2.text &&
-        passwordController1.text == "") ||
+            passwordController1.text == "") ||
         (passwordController1.text != passwordController2.text &&
-        passwordController2.text == "")) {
+            passwordController2.text == "")) {
       Flushbar(
         title: "Aanpassen mislukt",
         message: "de 2 wachtwoorden komen niet overeen.",
@@ -342,9 +329,6 @@ class _ProfileState extends State {
         housenrController.text != "") {
       UserApi.getUserEmail(user.email, token).then((userEmail) {
         if (userEmail.isEmpty || user.id == userEmail[0].id) {
-          print(passwordController1.text);
-          print(passwordController2.text);
-          print(user.password);
           hash();
         } else {
           Flushbar(
@@ -435,6 +419,14 @@ class _ProfileState extends State {
 
       user.password = hash;
     }
+
+    print("firstName: " + user.firstName);
+    print("lastName: " + user.lastName);
+    print("email: " + user.email);
+    print("password: " + user.password);
+    print("address: " + user.address);
+    print("postalCode: " + user.postalCode);
+    print("city: " + user.city);
 
     UserApi.updateUser(user.id, user, token).then((result) {
       Flushbar(
