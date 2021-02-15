@@ -57,11 +57,16 @@ class _HomePage extends State {
         setState(() {
           boxList = [];
           for (int i = 0; i < result.length; i++) {
+            print("boxUserId = " + result[i].id.toString());
             if (!differentBoxes.contains(result[i].boxID) &&
-                result[i].locations.last.endDate == null) {
-              differentBoxes.add(result[i].boxID);
-              boxList.add(result[i]);
-              print(differentBoxes.length);
+                result[i].locations.isNotEmpty &&
+                result[i].box.active == true) {
+              if (result[i].locations.last.endDate == null) {
+                differentBoxes.add(result[i].boxID);
+                boxList.add(result[i]);
+                print("boxId = " + result[i].boxID.toString());
+                print(differentBoxes.length);
+              }
             }
           }
           // for (int a = 0; a < result.length; a++) {
