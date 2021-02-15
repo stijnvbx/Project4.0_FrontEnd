@@ -53,7 +53,6 @@ class LocationApi {
       },
       body: jsonEncode(location),
     );
-    print("statusCode: " + response.statusCode.toString());
   }
 
   // DELETE -> location

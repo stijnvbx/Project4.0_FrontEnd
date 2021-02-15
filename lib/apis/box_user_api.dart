@@ -12,7 +12,6 @@ class BoxUserApi {
   static Future<List<BoxUser>> getBoxUsers(String token) async {
     final response = await http.get(url,
     headers: {HttpHeaders.authorizationHeader: "Bearer $token"},);
-    print(response.statusCode);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((boxUser) => new BoxUser.fromJsonWithBoxAndLocations(boxUser)).toList();
@@ -25,7 +24,6 @@ class BoxUserApi {
   static Future<List<BoxUser>> getBoxUserWithUserId(int id, String token) async {
     final response = await http.get(url + '/userId/$id',
     headers: {HttpHeaders.authorizationHeader: "Bearer $token"},);
-    print(response.statusCode);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((boxUser) => new BoxUser.fromJsonWithBoxAndLocations(boxUser)).toList();
@@ -69,7 +67,6 @@ class BoxUserApi {
       },
       body: jsonEncode(boxUser),
     );
-    print("statusCode: " + response.statusCode.toString());
   }
 
   // DELETE -> boxUser

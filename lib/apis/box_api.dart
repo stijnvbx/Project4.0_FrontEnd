@@ -25,7 +25,6 @@ class BoxApi {
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
     );
 
-    print(response.statusCode);
     if (response.statusCode == 200) {
       return Box.fromJsonBoxSensors(jsonDecode(response.body));
     } else {
@@ -68,7 +67,6 @@ class BoxApi {
       },
       body: jsonEncode(box),
     );
-    print("statusCode: " + response.statusCode.toString());
   }
 
   // DELETE -> user

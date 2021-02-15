@@ -35,7 +35,6 @@ class UserApi {
   static Future<List<User>> getUserEmail(String email, String token) async {
     final response = await http.get(url + '/email?email=' + email,
     headers: {HttpHeaders.authorizationHeader: "Bearer $token"},);
-    print(response.statusCode);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((user) => new User.fromJson(user)).toList();
@@ -64,7 +63,6 @@ class UserApi {
       },
       body: jsonEncode(user),
     );
-    print(response.statusCode);
     if (response.statusCode == 200) {
       return User.fromJsonWithUserType(jsonDecode(response.body));
     } else {
@@ -103,7 +101,6 @@ class UserApi {
       },
       body: jsonEncode(user),
     );
-    print("statusCode: " + response.statusCode.toString());
     // if (response.statusCode == 204) {
     //   return User.fromJson(jsonDecode(response.body));
     // } else {
