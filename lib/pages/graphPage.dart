@@ -8,7 +8,6 @@ import 'package:project4_front_end/models/measurement.dart';
 import 'package:project4_front_end/models/sensor.dart';
 import 'package:project4_front_end/widgets/bottomNavbar.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:week_of_year/week_of_year.dart';
 import 'package:intl/intl.dart';
 
 class GraphPage extends StatefulWidget {
@@ -463,6 +462,8 @@ class _GraphPage extends State {
                                     titleOutsideJustification: charts
                                         .OutsideJustification.middleDrawArea),
                               ],
+                              dateTimeFactory:
+                                  const charts.LocalDateTimeFactory(),
                             ),
                           ),
                       ],
@@ -510,6 +511,8 @@ class _GraphPage extends State {
                                         .OutsideJustification.middleDrawArea),
                                 new charts.SeriesLegend()
                               ],
+                              dateTimeFactory:
+                                  const charts.LocalDateTimeFactory(),
                             ),
                           ),
                       ],
@@ -557,6 +560,8 @@ class _GraphPage extends State {
                                         .OutsideJustification.middleDrawArea),
                                 new charts.SeriesLegend()
                               ],
+                              dateTimeFactory:
+                                  const charts.LocalDateTimeFactory(),
                             ),
                           ),
                       ],
