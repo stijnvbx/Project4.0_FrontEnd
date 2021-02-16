@@ -19,11 +19,11 @@ class GraphPage extends StatefulWidget {
   State<StatefulWidget> createState() => _GraphPage(id, token);
 }
 
-class Temp {
+class Value {
   int timestamp;
   double value;
 
-  Temp(this.timestamp, this.value);
+  Value(this.timestamp, this.value);
 }
 
 class _GraphPage extends State {
@@ -35,9 +35,9 @@ class _GraphPage extends State {
   Sensor sensor;
 
   List<Measurement> valList;
-  List<charts.Series<Temp, int>> _seriesDayData = [];
-  List<charts.Series<Temp, int>> _seriesWeekData = [];
-  List<charts.Series<Temp, int>> _seriesMonthData = [];
+  List<charts.Series<Value, int>> _seriesDayData;
+  List<charts.Series<Value, int>> _seriesWeekData;
+  List<charts.Series<Value, int>> _seriesMonthData;
 
   //Custom labels voor dagen van week in grafiek
   final customWeekFormatter = charts.BasicNumericTickFormatterSpec((num value) {
@@ -63,7 +63,6 @@ class _GraphPage extends State {
   final customMonthFormatter =
       charts.BasicNumericTickFormatterSpec((num value) {
     value += 1;
-
     return value.toInt().toString();
   });
 
@@ -77,30 +76,30 @@ class _GraphPage extends State {
   void initState() {
     super.initState();
     _getSensorWithType();
-    _getDayTempList();
-    _getWeekTempList();
-    _getMonthTempList();
+    _getDayValList();
+    _getWeekValList();
+    _getMonthValList();
   }
 
   _getSensorWithType() {
     SensorApi.getSensor(id, token).then((result) {
       setState(() {
         sensor = result;
-        print(sensor.sensorType.name);
       });
     });
   }
 
-  _getDayTempList() {
+  _getDayValList() {
     MeasurementApi.getMeasurementsFromSensor(id, token).then((result) {
       setState(() {
+        _seriesDayData = [];
         valList = result;
         valList.sort((a, b) {
           return a.timestamp.compareTo(b.timestamp);
         });
         int counter = 0;
-        var lineDayData = <Temp>[];
-        List<Temp> perHourList = [];
+        var lineDayData = <Value>[];
+        List<Value> perHourList = [];
         for (Measurement m in valList) {
           counter++;
           String today = DateFormat("yyyy-MM-DD").format(DateTime.now());
@@ -110,28 +109,31 @@ class _GraphPage extends State {
 
           if (today == measurementDate) {
             if (perHourList.isEmpty) {
-              perHourList.add(new Temp(int.parse(hour), double.parse(m.value)));
+              perHourList
+                  .add(new Value(int.parse(hour), double.parse(m.value)));
             } else if (int.parse(hour) == perHourList.last.timestamp) {
-              perHourList.add(new Temp(int.parse(hour), double.parse(m.value)));
+              perHourList
+                  .add(new Value(int.parse(hour), double.parse(m.value)));
             } else {
               double value = 0.0;
-              for (Temp t in perHourList) {
+              for (Value t in perHourList) {
                 value += t.value;
               }
               value /= perHourList.length;
 
-              lineDayData.add(new Temp(perHourList.last.timestamp, value));
+              lineDayData.add(new Value(perHourList.last.timestamp, value));
               perHourList.clear();
-              perHourList.add(new Temp(int.parse(hour), double.parse(m.value)));
+              perHourList
+                  .add(new Value(int.parse(hour), double.parse(m.value)));
             }
 
             if (valList.length == counter) {
               double value = 0.0;
-              for (Temp t in perHourList) {
+              for (Value t in perHourList) {
                 value += t.value;
               }
               value /= perHourList.length;
-              lineDayData.add(new Temp(perHourList.last.timestamp, value));
+              lineDayData.add(new Value(perHourList.last.timestamp, value));
               perHourList.clear();
             }
           }
@@ -144,8 +146,8 @@ class _GraphPage extends State {
                   charts.ColorUtil.fromDartColor(Color(0xff109618)),
               id: 'Meting',
               data: lineDayData,
-              domainFn: (Temp temperature, _) => temperature.timestamp,
-              measureFn: (Temp temperature, _) => temperature.value,
+              domainFn: (Value value, _) => value.timestamp,
+              measureFn: (Value value, _) => value.value,
             ),
           );
         }
@@ -153,113 +155,116 @@ class _GraphPage extends State {
     });
   }
 
-  _getWeekTempList() {
+  _getWeekValList() {
     MeasurementApi.getMeasurementsFromSensor(id, token).then((result) {
       setState(() {
+        _seriesWeekData = [];
         valList = result;
         valList.sort((a, b) {
           return a.timestamp.compareTo(b.timestamp);
         });
-        List<Temp> perDayList = [];
-        List<Temp> perNightList = [];
+        List<Value> perDayList = [];
+        List<Value> perNightList = [];
 
-        var lineDayTempData = <Temp>[];
-        var lineNightTempData = <Temp>[];
+        var lineDayValData = <Value>[];
+        var lineNightValData = <Value>[];
         int counter = 0;
 
         for (Measurement m in valList) {
           counter++;
-          DateTime today = DateTime.now();
-          DateTime measurementDate = DateTime.parse(m.timestamp);
+          var today = DateTime.now();
+          var measurementDate = DateTime.parse(m.timestamp);
+          Duration difference = today.difference(measurementDate);
           String day = m.timestamp.split('T')[0].split('-')[2];
           int hour = int.parse(m.timestamp.split('T')[1].split(':')[0]);
 
-          if (measurementDate.weekOfYear == today.weekOfYear) {
+          if (difference.inDays <= 7 && measurementDate.isBefore(today)) {
             if (hour >= 6 && hour <= 18) {
-              //print("Hour of day: " + hour.toString() + " day: " + day);
               if (perDayList.isEmpty) {
-                perDayList.add(new Temp(int.parse(day), double.parse(m.value)));
+                perDayList
+                    .add(new Value(int.parse(day), double.parse(m.value)));
               } else if (int.parse(day) == perDayList.last.timestamp) {
-                perDayList.add(new Temp(int.parse(day), double.parse(m.value)));
+                perDayList
+                    .add(new Value(int.parse(day), double.parse(m.value)));
               } else {
                 double value = 0.0;
-                for (Temp t in perDayList) {
+                for (Value t in perDayList) {
                   value += t.value;
                 }
                 value /= perDayList.length;
-                lineDayTempData.add(new Temp(perDayList.last.timestamp, value));
+                lineDayValData.add(new Value(perDayList.last.timestamp, value));
                 perDayList.clear();
-                perDayList.add(new Temp(int.parse(day), double.parse(m.value)));
+                perDayList
+                    .add(new Value(int.parse(day), double.parse(m.value)));
               }
 
               if (valList.length == counter) {
                 double value = 0.0;
-                for (Temp t in perDayList) {
+                for (Value t in perDayList) {
                   value += t.value;
                 }
                 value /= perDayList.length;
-                lineDayTempData.add(new Temp(perDayList.last.timestamp, value));
+                lineDayValData.add(new Value(perDayList.last.timestamp, value));
                 perDayList.clear();
               }
             }
 
             //Nacht
             else {
-              //print("Hour of night: " + hour.toString() + " day " + day);
               if (perNightList.isEmpty) {
                 perNightList
-                    .add(new Temp(int.parse(day), double.parse(m.value)));
+                    .add(new Value(int.parse(day), double.parse(m.value)));
               } else if (int.parse(day) == perNightList.last.timestamp) {
                 perNightList
-                    .add(new Temp(int.parse(day), double.parse(m.value)));
+                    .add(new Value(int.parse(day), double.parse(m.value)));
               } else {
                 double value = 0.0;
-                for (Temp t in perNightList) {
+                for (Value t in perNightList) {
                   value += t.value;
                 }
                 value /= perNightList.length;
-                lineNightTempData
-                    .add(new Temp(perNightList.last.timestamp, value));
+                lineNightValData
+                    .add(new Value(perNightList.last.timestamp, value));
                 perNightList.clear();
                 perNightList
-                    .add(new Temp(int.parse(day), double.parse(m.value)));
+                    .add(new Value(int.parse(day), double.parse(m.value)));
               }
 
               if (valList.length == counter) {
                 double value = 0.0;
-                for (Temp t in perNightList) {
+                for (Value t in perNightList) {
                   value += t.value;
                 }
                 value /= perNightList.length;
-                lineNightTempData
-                    .add(new Temp(perNightList.last.timestamp, value));
+                lineNightValData
+                    .add(new Value(perNightList.last.timestamp, value));
                 perNightList.clear();
               }
             }
           }
         }
-        if (lineDayTempData.isNotEmpty) {
+        if (lineDayValData.isNotEmpty) {
           _seriesWeekData.add(
             charts.Series(
               colorFn: (__, _) =>
                   charts.ColorUtil.fromDartColor(Color(0xff990000)),
               id: 'Dag',
-              data: lineDayTempData,
-              domainFn: (Temp temperature, _) => temperature.timestamp - 1,
-              measureFn: (Temp temperature, _) => temperature.value,
+              data: lineDayValData,
+              domainFn: (Value value, _) => value.timestamp - 1,
+              measureFn: (Value value, _) => value.value,
             ),
           );
         }
 
-        if (lineNightTempData.isNotEmpty) {
+        if (lineNightValData.isNotEmpty) {
           _seriesWeekData.add(
             charts.Series(
               colorFn: (__, _) =>
                   charts.ColorUtil.fromDartColor(Color(0xff3366cc)),
               id: 'Nacht',
-              data: lineNightTempData,
-              domainFn: (Temp temperature, _) => temperature.timestamp - 1,
-              measureFn: (Temp temperature, _) => temperature.value,
+              data: lineNightValData,
+              domainFn: (Value value, _) => value.timestamp - 1,
+              measureFn: (Value value, _) => value.value,
             ),
           );
         }
@@ -267,116 +272,115 @@ class _GraphPage extends State {
     });
   }
 
-  _getMonthTempList() {
+  _getMonthValList() {
     MeasurementApi.getMeasurementsFromSensor(id, token).then((result) {
       setState(() {
+        _seriesMonthData = [];
         valList = result;
         valList.sort((a, b) {
           return a.timestamp.compareTo(b.timestamp);
         });
-        List<Temp> perDayList = [];
-        List<Temp> perNightList = [];
+        List<Value> perDayList = [];
+        List<Value> perNightList = [];
 
-        var lineDayTempData = <Temp>[];
-        var lineNightTempData = <Temp>[];
+        var lineDayValData = <Value>[];
+        var lineNightValData = <Value>[];
         int counter = 0;
         for (Measurement m in valList) {
           counter++;
-          String thisMonth = DateFormat("yyyy-MM").format(DateTime.now());
-          String measurementMonth =
-              DateFormat("yyyy-MM").format(DateTime.parse(m.timestamp));
+          var today = DateTime.now();
+          var measurementDate = DateTime.parse(m.timestamp);
+          Duration difference = today.difference(measurementDate);
           String day = m.timestamp.split('T')[0].split('-')[2];
           int hour = int.parse(m.timestamp.split('T')[1].split(':')[0]);
 
-          if (thisMonth == measurementMonth) {
-            //DAG
-            //print("day: " + int.parse(day).toString());
-            //print("measure day: " + perDayList.last.timestamp.toString());
+          if (difference.inDays <= 31 && measurementDate.isBefore(today)) {
             if (hour >= 6 && hour <= 18) {
-              //print("Hour of day: " + hour.toString() + " day: " + day);
               if (perDayList.isEmpty) {
-                perDayList.add(new Temp(int.parse(day), double.parse(m.value)));
+                perDayList
+                    .add(new Value(int.parse(day), double.parse(m.value)));
               } else if (int.parse(day) == perDayList.last.timestamp) {
-                perDayList.add(new Temp(int.parse(day), double.parse(m.value)));
+                perDayList
+                    .add(new Value(int.parse(day), double.parse(m.value)));
               } else {
                 double value = 0.0;
-                for (Temp t in perDayList) {
+                for (Value t in perDayList) {
                   value += t.value;
                 }
                 value /= perDayList.length;
-                lineDayTempData.add(new Temp(perDayList.last.timestamp, value));
+                lineDayValData.add(new Value(perDayList.last.timestamp, value));
                 perDayList.clear();
-                perDayList.add(new Temp(int.parse(day), double.parse(m.value)));
+                perDayList
+                    .add(new Value(int.parse(day), double.parse(m.value)));
               }
 
               if (valList.length == counter) {
                 double value = 0.0;
-                for (Temp t in perDayList) {
+                for (Value t in perDayList) {
                   value += t.value;
                 }
                 value /= perDayList.length;
-                lineDayTempData.add(new Temp(perDayList.last.timestamp, value));
+                lineDayValData.add(new Value(perDayList.last.timestamp, value));
                 perDayList.clear();
               }
             }
 
             //Nacht
             else {
-              //print("Hour of night: " + hour.toString() + " day " + day);
               if (perNightList.isEmpty) {
                 perNightList
-                    .add(new Temp(int.parse(day), double.parse(m.value)));
+                    .add(new Value(int.parse(day), double.parse(m.value)));
               } else if (int.parse(day) == perNightList.last.timestamp) {
                 perNightList
-                    .add(new Temp(int.parse(day), double.parse(m.value)));
+                    .add(new Value(int.parse(day), double.parse(m.value)));
               } else {
                 double value = 0.0;
-                for (Temp t in perNightList) {
+                for (Value t in perNightList) {
                   value += t.value;
                 }
                 value /= perNightList.length;
-                lineNightTempData
-                    .add(new Temp(perNightList.last.timestamp, value));
+                lineNightValData
+                    .add(new Value(perNightList.last.timestamp, value));
                 perNightList.clear();
                 perNightList
-                    .add(new Temp(int.parse(day), double.parse(m.value)));
+                    .add(new Value(int.parse(day), double.parse(m.value)));
               }
 
               if (valList.length == counter) {
                 double value = 0.0;
-                for (Temp t in perNightList) {
+                for (Value t in perNightList) {
                   value += t.value;
                 }
                 value /= perNightList.length;
-                lineNightTempData
-                    .add(new Temp(perNightList.last.timestamp, value));
+                lineNightValData
+                    .add(new Value(perNightList.last.timestamp, value));
                 perNightList.clear();
               }
             }
           }
         }
 
-        if (lineDayTempData.isNotEmpty) {
+        if (lineDayValData.isNotEmpty) {
           _seriesMonthData.add(
             charts.Series(
               colorFn: (__, _) =>
                   charts.ColorUtil.fromDartColor(Color(0xff990011)),
               id: 'Dag',
-              data: lineDayTempData,
-              domainFn: (Temp temperature, _) => temperature.timestamp - 1,
-              measureFn: (Temp temperature, _) => temperature.value,
+              data: lineDayValData,
+              domainFn: (Value value, _) => value.timestamp - 1,
+              measureFn: (Value value, _) => value.value,
             ),
           );
         }
-        if (lineNightTempData.isNotEmpty) {
+        if (lineNightValData.isNotEmpty) {
           _seriesMonthData.add(
             charts.Series(
               colorFn: (__, _) =>
                   charts.ColorUtil.fromDartColor(Color(0xff3366cc)),
               id: 'Nacht',
-              data: lineNightTempData,
-              domainFn: (Temp temperature, _) => temperature.timestamp - 1,
-              measureFn: (Temp temperature, _) => temperature.value,
+              data: lineNightValData,
+              domainFn: (Value value, _) => value.timestamp - 1,
+              measureFn: (Value value, _) => value.value,
             ),
           );
         }
