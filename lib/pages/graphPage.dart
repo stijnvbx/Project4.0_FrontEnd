@@ -20,7 +20,7 @@ class GraphPage extends StatefulWidget {
 }
 
 class Value {
-  int timestamp;
+  DateTime timestamp;
   double value;
 
   Value(this.timestamp, this.value);
@@ -35,36 +35,9 @@ class _GraphPage extends State {
   Sensor sensor;
 
   List<Measurement> valList;
-  List<charts.Series<Value, int>> _seriesDayData;
-  List<charts.Series<Value, int>> _seriesWeekData;
-  List<charts.Series<Value, int>> _seriesMonthData;
-
-  //Custom labels voor dagen van week in grafiek
-  final customWeekFormatter = charts.BasicNumericTickFormatterSpec((num value) {
-    if (value == 0) {
-      return "Ma";
-    } else if (value == 1) {
-      return "Di";
-    } else if (value == 2) {
-      return "Wo";
-    } else if (value == 3) {
-      return "Do";
-    } else if (value == 4) {
-      return "Vr";
-    } else if (value == 5) {
-      return "Za";
-    } else if (value == 6) {
-      return "Zo";
-    }
-  });
-
-  //Custom labels voor de dagen van de maand zodat deze bij nul beginnen te tellen maar de klant ziet het niet
-
-  final customMonthFormatter =
-      charts.BasicNumericTickFormatterSpec((num value) {
-    value += 1;
-    return value.toInt().toString();
-  });
+  List<charts.Series<Value, DateTime>> _seriesDayData;
+  List<charts.Series<Value, DateTime>> _seriesWeekData;
+  List<charts.Series<Value, DateTime>> _seriesMonthData;
 
   void _selectedTab(int index) {
     setState(() {
@@ -105,15 +78,15 @@ class _GraphPage extends State {
           String today = DateFormat("yyyy-MM-DD").format(DateTime.now());
           String measurementDate =
               DateFormat("yyyy-MM-DD").format(DateTime.parse(m.timestamp));
-          String hour = m.timestamp.split('T')[1].split(':')[0];
+          DateTime measurementTime = DateTime.parse(m.timestamp);
 
           if (today == measurementDate) {
             if (perHourList.isEmpty) {
               perHourList
-                  .add(new Value(int.parse(hour), double.parse(m.value)));
-            } else if (int.parse(hour) == perHourList.last.timestamp) {
+                  .add(new Value(measurementTime, double.parse(m.value)));
+            } else if (measurementTime == perHourList.last.timestamp) {
               perHourList
-                  .add(new Value(int.parse(hour), double.parse(m.value)));
+                  .add(new Value(measurementTime, double.parse(m.value)));
             } else {
               double value = 0.0;
               for (Value t in perHourList) {
@@ -124,7 +97,7 @@ class _GraphPage extends State {
               lineDayData.add(new Value(perHourList.last.timestamp, value));
               perHourList.clear();
               perHourList
-                  .add(new Value(int.parse(hour), double.parse(m.value)));
+                  .add(new Value(measurementTime, double.parse(m.value)));
             }
 
             if (valList.length == counter) {
@@ -172,20 +145,19 @@ class _GraphPage extends State {
 
         for (Measurement m in valList) {
           counter++;
-          var today = DateTime.now();
-          var measurementDate = DateTime.parse(m.timestamp);
+          DateTime today = DateTime.now();
+          DateTime measurementDate = DateTime.parse(m.timestamp);
           Duration difference = today.difference(measurementDate);
-          String day = m.timestamp.split('T')[0].split('-')[2];
           int hour = int.parse(m.timestamp.split('T')[1].split(':')[0]);
 
           if (difference.inDays <= 7 && measurementDate.isBefore(today)) {
             if (hour >= 6 && hour <= 18) {
               if (perDayList.isEmpty) {
                 perDayList
-                    .add(new Value(int.parse(day), double.parse(m.value)));
-              } else if (int.parse(day) == perDayList.last.timestamp) {
+                    .add(new Value(measurementDate, double.parse(m.value)));
+              } else if (measurementDate.day == perDayList.last.timestamp.day) {
                 perDayList
-                    .add(new Value(int.parse(day), double.parse(m.value)));
+                    .add(new Value(measurementDate, double.parse(m.value)));
               } else {
                 double value = 0.0;
                 for (Value t in perDayList) {
@@ -195,7 +167,7 @@ class _GraphPage extends State {
                 lineDayValData.add(new Value(perDayList.last.timestamp, value));
                 perDayList.clear();
                 perDayList
-                    .add(new Value(int.parse(day), double.parse(m.value)));
+                    .add(new Value(measurementDate, double.parse(m.value)));
               }
 
               if (valList.length == counter) {
@@ -213,10 +185,11 @@ class _GraphPage extends State {
             else {
               if (perNightList.isEmpty) {
                 perNightList
-                    .add(new Value(int.parse(day), double.parse(m.value)));
-              } else if (int.parse(day) == perNightList.last.timestamp) {
+                    .add(new Value(measurementDate, double.parse(m.value)));
+              } else if (measurementDate.day ==
+                  perNightList.last.timestamp.day) {
                 perNightList
-                    .add(new Value(int.parse(day), double.parse(m.value)));
+                    .add(new Value(measurementDate, double.parse(m.value)));
               } else {
                 double value = 0.0;
                 for (Value t in perNightList) {
@@ -227,7 +200,7 @@ class _GraphPage extends State {
                     .add(new Value(perNightList.last.timestamp, value));
                 perNightList.clear();
                 perNightList
-                    .add(new Value(int.parse(day), double.parse(m.value)));
+                    .add(new Value(measurementDate, double.parse(m.value)));
               }
 
               if (valList.length == counter) {
@@ -250,7 +223,7 @@ class _GraphPage extends State {
                   charts.ColorUtil.fromDartColor(Color(0xff990000)),
               id: 'Dag',
               data: lineDayValData,
-              domainFn: (Value value, _) => value.timestamp - 1,
+              domainFn: (Value value, _) => value.timestamp,
               measureFn: (Value value, _) => value.value,
             ),
           );
@@ -263,7 +236,7 @@ class _GraphPage extends State {
                   charts.ColorUtil.fromDartColor(Color(0xff3366cc)),
               id: 'Nacht',
               data: lineNightValData,
-              domainFn: (Value value, _) => value.timestamp - 1,
+              domainFn: (Value value, _) => value.timestamp,
               measureFn: (Value value, _) => value.value,
             ),
           );
@@ -288,20 +261,19 @@ class _GraphPage extends State {
         int counter = 0;
         for (Measurement m in valList) {
           counter++;
-          var today = DateTime.now();
-          var measurementDate = DateTime.parse(m.timestamp);
+          DateTime today = DateTime.now();
+          DateTime measurementDate = DateTime.parse(m.timestamp);
           Duration difference = today.difference(measurementDate);
-          String day = m.timestamp.split('T')[0].split('-')[2];
           int hour = int.parse(m.timestamp.split('T')[1].split(':')[0]);
 
           if (difference.inDays <= 31 && measurementDate.isBefore(today)) {
             if (hour >= 6 && hour <= 18) {
               if (perDayList.isEmpty) {
                 perDayList
-                    .add(new Value(int.parse(day), double.parse(m.value)));
-              } else if (int.parse(day) == perDayList.last.timestamp) {
+                    .add(new Value(measurementDate, double.parse(m.value)));
+              } else if (measurementDate.day == perDayList.last.timestamp.day) {
                 perDayList
-                    .add(new Value(int.parse(day), double.parse(m.value)));
+                    .add(new Value(measurementDate, double.parse(m.value)));
               } else {
                 double value = 0.0;
                 for (Value t in perDayList) {
@@ -311,7 +283,7 @@ class _GraphPage extends State {
                 lineDayValData.add(new Value(perDayList.last.timestamp, value));
                 perDayList.clear();
                 perDayList
-                    .add(new Value(int.parse(day), double.parse(m.value)));
+                    .add(new Value(measurementDate, double.parse(m.value)));
               }
 
               if (valList.length == counter) {
@@ -329,10 +301,11 @@ class _GraphPage extends State {
             else {
               if (perNightList.isEmpty) {
                 perNightList
-                    .add(new Value(int.parse(day), double.parse(m.value)));
-              } else if (int.parse(day) == perNightList.last.timestamp) {
+                    .add(new Value(measurementDate, double.parse(m.value)));
+              } else if (measurementDate.day ==
+                  perNightList.last.timestamp.day) {
                 perNightList
-                    .add(new Value(int.parse(day), double.parse(m.value)));
+                    .add(new Value(measurementDate, double.parse(m.value)));
               } else {
                 double value = 0.0;
                 for (Value t in perNightList) {
@@ -343,7 +316,7 @@ class _GraphPage extends State {
                     .add(new Value(perNightList.last.timestamp, value));
                 perNightList.clear();
                 perNightList
-                    .add(new Value(int.parse(day), double.parse(m.value)));
+                    .add(new Value(measurementDate, double.parse(m.value)));
               }
 
               if (valList.length == counter) {
@@ -367,7 +340,7 @@ class _GraphPage extends State {
                   charts.ColorUtil.fromDartColor(Color(0xff990011)),
               id: 'Dag',
               data: lineDayValData,
-              domainFn: (Value value, _) => value.timestamp - 1,
+              domainFn: (Value value, _) => value.timestamp,
               measureFn: (Value value, _) => value.value,
             ),
           );
@@ -379,7 +352,7 @@ class _GraphPage extends State {
                   charts.ColorUtil.fromDartColor(Color(0xff3366cc)),
               id: 'Nacht',
               data: lineNightValData,
-              domainFn: (Value value, _) => value.timestamp - 1,
+              domainFn: (Value value, _) => value.timestamp,
               measureFn: (Value value, _) => value.value,
             ),
           );
@@ -471,10 +444,8 @@ class _GraphPage extends State {
                           ),
                         if (_seriesDayData.isNotEmpty)
                           Expanded(
-                            child: charts.LineChart(
+                            child: charts.TimeSeriesChart(
                               _seriesDayData,
-                              defaultRenderer: new charts.LineRendererConfig(
-                                  includeArea: false, stacked: false),
                               animate: true,
                               animationDuration: Duration(seconds: 1),
                               behaviors: [
@@ -492,19 +463,6 @@ class _GraphPage extends State {
                                     titleOutsideJustification: charts
                                         .OutsideJustification.middleDrawArea),
                               ],
-                              domainAxis: new charts.NumericAxisSpec(
-                                  viewport: new charts.NumericExtents(0, 24),
-                                  tickProviderSpec:
-                                      new charts.BasicNumericTickProviderSpec(
-                                          zeroBound: true,
-                                          desiredTickCount: 12)),
-                              primaryMeasureAxis: new charts.NumericAxisSpec(
-                                  tickProviderSpec:
-                                      new charts.BasicNumericTickProviderSpec(
-                                zeroBound: true,
-                                desiredMinTickCount: 10,
-                                desiredMaxTickCount: 20,
-                              )),
                             ),
                           ),
                       ],
@@ -532,10 +490,8 @@ class _GraphPage extends State {
                           ),
                         if (_seriesWeekData.isNotEmpty)
                           Expanded(
-                            child: charts.LineChart(
+                            child: charts.TimeSeriesChart(
                               _seriesWeekData,
-                              defaultRenderer: new charts.LineRendererConfig(
-                                  includeArea: false, stacked: false),
                               animate: true,
                               animationDuration: Duration(seconds: 1),
                               behaviors: [
@@ -554,22 +510,6 @@ class _GraphPage extends State {
                                         .OutsideJustification.middleDrawArea),
                                 new charts.SeriesLegend()
                               ],
-                              domainAxis: new charts.NumericAxisSpec(
-                                viewport: new charts.NumericExtents(0, 6),
-                                tickProviderSpec:
-                                    new charts.BasicNumericTickProviderSpec(
-                                  zeroBound: true,
-                                  desiredTickCount: 14,
-                                ),
-                                tickFormatterSpec: customWeekFormatter,
-                              ),
-                              primaryMeasureAxis: new charts.NumericAxisSpec(
-                                  tickProviderSpec:
-                                      new charts.BasicNumericTickProviderSpec(
-                                zeroBound: true,
-                                desiredMinTickCount: 10,
-                                desiredMaxTickCount: 20,
-                              )),
                             ),
                           ),
                       ],
@@ -597,10 +537,8 @@ class _GraphPage extends State {
                           ),
                         if (_seriesMonthData.isNotEmpty)
                           Expanded(
-                            child: charts.LineChart(
+                            child: charts.TimeSeriesChart(
                               _seriesMonthData,
-                              defaultRenderer: new charts.LineRendererConfig(
-                                  includeArea: false, stacked: false),
                               animate: true,
                               animationDuration: Duration(seconds: 1),
                               behaviors: [
@@ -619,20 +557,6 @@ class _GraphPage extends State {
                                         .OutsideJustification.middleDrawArea),
                                 new charts.SeriesLegend()
                               ],
-                              domainAxis: new charts.NumericAxisSpec(
-                                viewport: new charts.NumericExtents(0, 30),
-                                tickProviderSpec:
-                                    new charts.BasicNumericTickProviderSpec(
-                                        zeroBound: true, desiredTickCount: 16),
-                                tickFormatterSpec: customMonthFormatter,
-                              ),
-                              primaryMeasureAxis: new charts.NumericAxisSpec(
-                                  tickProviderSpec:
-                                      new charts.BasicNumericTickProviderSpec(
-                                zeroBound: true,
-                                desiredMinTickCount: 10,
-                                desiredMaxTickCount: 20,
-                              )),
                             ),
                           ),
                       ],
