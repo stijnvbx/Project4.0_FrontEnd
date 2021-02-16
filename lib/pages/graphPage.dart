@@ -33,6 +33,21 @@ class _GraphPage extends State {
 
   Sensor sensor;
 
+  double dayValue;
+  DateTime dayTime;
+
+  double weekValueDay;
+  DateTime weekTimeDay;
+
+  double weekValueNight;
+  DateTime weekTimeNight;
+
+  double monthValueDay;
+  DateTime monthTimeDay;
+
+  double monthValueNight;
+  DateTime monthTimeNight;
+
   List<Measurement> valList;
   List<charts.Series<Value, DateTime>> _seriesDayData;
   List<charts.Series<Value, DateTime>> _seriesWeekData;
@@ -464,7 +479,32 @@ class _GraphPage extends State {
                               ],
                               dateTimeFactory:
                                   const charts.LocalDateTimeFactory(),
+                              selectionModels: [
+                                charts.SelectionModelConfig(changedListener:
+                                    (charts.SelectionModel model) {
+                                  if (model.hasDatumSelection)
+                                    setState(() {
+                                      dayValue = model.selectedSeries[0]
+                                          .measureFn(
+                                              model.selectedDatum[0].index);
+                                      dayTime = model.selectedSeries[0]
+                                          .domainFn(
+                                              model.selectedDatum[0].index);
+                                    });
+                                })
+                              ],
                             ),
+                          ),
+                        if (dayValue != null && dayTime != null)
+                          Text(
+                            'Waarde om ' +
+                                dayTime.hour.toString() +
+                                ":" +
+                                dayTime.minute.toString() +
+                                " was $dayValue" +
+                                sensor.sensorType.unit,
+                            style: TextStyle(
+                                fontSize: 24.0, fontWeight: FontWeight.bold),
                           ),
                       ],
                     ),
@@ -513,7 +553,61 @@ class _GraphPage extends State {
                               ],
                               dateTimeFactory:
                                   const charts.LocalDateTimeFactory(),
+                              selectionModels: [
+                                charts.SelectionModelConfig(changedListener:
+                                    (charts.SelectionModel model) {
+                                  if (model.hasDatumSelection)
+                                    setState(() {
+                                      DateTime week = model.selectedSeries[0]
+                                          .domainFn(
+                                              model.selectedDatum[0].index);
+                                      if (week.hour >= 6 && week.hour <= 18) {
+                                        weekValueDay = model.selectedSeries[0]
+                                            .measureFn(
+                                                model.selectedDatum[0].index);
+                                        weekTimeDay = model.selectedSeries[0]
+                                            .domainFn(
+                                                model.selectedDatum[0].index);
+                                      } else {
+                                        weekValueNight = model.selectedSeries[0]
+                                            .measureFn(
+                                                model.selectedDatum[0].index);
+                                        weekTimeNight = model.selectedSeries[0]
+                                            .domainFn(
+                                                model.selectedDatum[0].index);
+                                      }
+                                    });
+                                })
+                              ],
                             ),
+                          ),
+                        if (weekValueDay != null && weekTimeDay != null)
+                          Text(
+                            'Waarde om ' +
+                                weekTimeDay.day.toString() +
+                                "/" +
+                                weekTimeDay.month.toString() +
+                                " was " +
+                                weekValueDay.toStringAsFixed(2) +
+                                sensor.sensorType.unit,
+                            style: TextStyle(
+                                fontSize: 24.0,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff990011)),
+                          ),
+                        if (weekValueNight != null && weekTimeNight != null)
+                          Text(
+                            'Waarde om ' +
+                                weekTimeNight.day.toString() +
+                                "/" +
+                                weekTimeNight.month.toString() +
+                                " was " +
+                                weekValueNight.toStringAsFixed(2) +
+                                sensor.sensorType.unit,
+                            style: TextStyle(
+                                fontSize: 24.0,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff3366cc)),
                           ),
                       ],
                     ),
@@ -562,7 +656,61 @@ class _GraphPage extends State {
                               ],
                               dateTimeFactory:
                                   const charts.LocalDateTimeFactory(),
+                              selectionModels: [
+                                charts.SelectionModelConfig(changedListener:
+                                    (charts.SelectionModel model) {
+                                  if (model.hasDatumSelection)
+                                    setState(() {
+                                      DateTime week = model.selectedSeries[0]
+                                          .domainFn(
+                                              model.selectedDatum[0].index);
+                                      if (week.hour >= 6 && week.hour <= 18) {
+                                        monthValueDay = model.selectedSeries[0]
+                                            .measureFn(
+                                                model.selectedDatum[0].index);
+                                        monthTimeDay = model.selectedSeries[0]
+                                            .domainFn(
+                                                model.selectedDatum[0].index);
+                                      } else {
+                                        monthValueNight =
+                                            model.selectedSeries[0].measureFn(
+                                                model.selectedDatum[0].index);
+                                        monthTimeNight = model.selectedSeries[0]
+                                            .domainFn(
+                                                model.selectedDatum[0].index);
+                                      }
+                                    });
+                                })
+                              ],
                             ),
+                          ),
+                        if (monthValueDay != null && monthTimeDay != null)
+                          Text(
+                            'Waarde om ' +
+                                monthTimeDay.day.toString() +
+                                "/" +
+                                monthTimeDay.month.toString() +
+                                " was " +
+                                monthValueDay.toStringAsFixed(2) +
+                                sensor.sensorType.unit,
+                            style: TextStyle(
+                                fontSize: 24.0,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff990011)),
+                          ),
+                        if (monthValueNight != null && monthTimeNight != null)
+                          Text(
+                            'Waarde om ' +
+                                monthTimeNight.day.toString() +
+                                "/" +
+                                monthTimeNight.month.toString() +
+                                " was " +
+                                monthValueNight.toStringAsFixed(2) +
+                                sensor.sensorType.unit,
+                            style: TextStyle(
+                                fontSize: 24.0,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff3366cc)),
                           ),
                       ],
                     ),

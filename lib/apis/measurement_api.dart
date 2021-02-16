@@ -25,7 +25,6 @@ class MeasurementApi {
   static Future<List<Measurement>> getMeasurementsFromSensor(int id, String token) async {
     final response = await http.get(url + '/Sensor/' + id.toString(),
     headers: {HttpHeaders.authorizationHeader: "Bearer $token"},);
-    print(response.statusCode);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse
@@ -72,7 +71,6 @@ class MeasurementApi {
       },
       body: jsonEncode(measurement),
     );
-    print("statusCode: " + response.statusCode.toString());
   }
 
   // DELETE -> measurement

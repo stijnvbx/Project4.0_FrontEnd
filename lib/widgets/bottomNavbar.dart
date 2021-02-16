@@ -39,24 +39,13 @@ class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
         _selectedIndex = index;
         if (_selectedIndex == 0) {
           setSelectedIndex(_selectedIndex);
-          print("home");
           Navigator.pushNamedAndRemoveUntil(
               context, HomePage.routeName, (_) => false);
         } else {
-          print("register");
           setSelectedIndex(_selectedIndex);
           Navigator.pushNamedAndRemoveUntil(
               context, Profile.routeName, (_) => false);
         }
-        // } else if (_selectedIndex == 2) {
-        //   setSelectedIndex(_selectedIndex);
-        //   print("info");
-        // } else {
-        //   print("register");
-        //   setSelectedIndex(_selectedIndex);
-        //   Navigator.pushNamedAndRemoveUntil(
-        //       context, Profile.routeName, (_) => false);
-        // }
       }
     });
   }
@@ -70,7 +59,6 @@ class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       _selectedIndex = prefs.getInt('selectedIndex');
-      print("selectedIndex: " + _selectedIndex.toString());
     });
   }
 

@@ -48,46 +48,28 @@ class _HomePage extends State {
     userID = prefs.getInt('userID');
     token = prefs.getString('token');
     userTypeName = prefs.getString('userTypeName');
-    print(userID);
-    print(token);
-    print(userTypeName);
     if (userTypeName == "Monteur") {
-      print("test");
       BoxUserApi.getBoxUsers(token).then((result) {
         setState(() {
           boxList = [];
           for (int i = 0; i < result.length; i++) {
             if (!differentBoxes.contains(result[i].boxID) &&
-                result[i].locations.last.endDate == null) {
-              differentBoxes.add(result[i].boxID);
-              boxList.add(result[i]);
-              print(differentBoxes.length);
+                result[i].locations.isNotEmpty &&
+                result[i].box.active == true) {
+              if (result[i].locations.last.endDate == null) {
+                differentBoxes.add(result[i].boxID);
+                boxList.add(result[i]);
+              }
             }
           }
-          // for (int a = 0; a < result.length; a++) {
-          //   if (!differentBoxes.contains(result[a].boxID)) {
-          //     differentBoxes.add(result[a].boxID);
-          //     boxList.add(result[a]);
-          //     print(differentBoxes.length);
-          //   }
-          // }
+
           boxList.sort((a, b) {
             return a.box.name.compareTo(b.box.name);
           });
           count = boxList.length;
           if (boxList.isNotEmpty) {
             for (int i = 0; i < count; i++) {
-              //print(boxList[i].locations.last.endDate);
               currentLocations.add(boxList[i].locations.last);
-            }
-            for (int i = 0; i < currentLocations.length; i++) {
-              print(boxList[i].userID);
-              print("lat: " +
-                  currentLocations[i].latitude.toString() +
-                  " long: " +
-                  currentLocations[i].longitude.toString() +
-                  " endDate: " +
-                  currentLocations[i].id.toString());
             }
 
             for (int z = 0; z < count; z++) {
@@ -123,7 +105,6 @@ class _HomePage extends State {
               if (currentLocations[z].endDate == null) {
                 lat = currentLocations[z].latitude;
                 long = currentLocations[z].longitude;
-                print("lat: " + lat.toString() + " long: " + long.toString());
                 _getCoordinats(lat, long);
               }
             }
@@ -140,10 +121,8 @@ class _HomePage extends State {
         .findAddressesFromCoordinates(new Coordinates(lat, long));
     first = addresses.first;
 
-    //print("${first.adminArea} : ${first.addressLine} : ${first.countryCode} : ${first.countryName} : ${first.locality} : ${first.postalCode} : ${first.subAdminArea} : ${first.subThoroughfare} : ${first.thoroughfare}");
     setState(() {
       locations.add(first.addressLine);
-      print(locations);
     });
   }
 
@@ -233,9 +212,6 @@ class _HomePage extends State {
                   ),
                   isThreeLine: true,
                   onTap: () {
-                    debugPrint("Tapped on myMapId: " +
-                        this.boxList[position].box.id.toString());
-                    print("Navigate to Sensors");
                     _showSensors(this.boxList[position].box.id, token);
                   },
                 ),

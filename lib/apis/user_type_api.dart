@@ -53,7 +53,6 @@ class UserTypeApi {
       },
       body: jsonEncode(userType),
     );
-    print("statusCode: " + response.statusCode.toString());
   }
 
   // DELETE -> userType

@@ -53,7 +53,6 @@ class SensorTypeApi {
       },
       body: jsonEncode(sensorType),
     );
-    print("statusCode: " + response.statusCode.toString());
   }
 
   // DELETE -> sensorType

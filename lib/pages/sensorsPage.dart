@@ -24,6 +24,7 @@ class _SensorsState extends State {
   int count = 0;
   Box box;
   String boxName = "";
+  Measurement measurement;
 
   void _selectedTab(int index) {
     setState(() {
@@ -43,8 +44,7 @@ class _SensorsState extends State {
       setState(() {
         box = result;
         count = box.sensorBoxes.length;
-        boxName = "- " + box.name;
-        print("test: " + box.toString());
+        boxName = box.name;
       });
     });
   }
@@ -52,8 +52,13 @@ class _SensorsState extends State {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: Navbar(tabName: 'Sensoren $boxName'),
-      body: _sensorList(),
+      appBar: Navbar(tabName: '$boxName'),
+      body: Container(
+        padding: EdgeInsets.all(5.0),
+        child: _sensorList(),
+        //change margin from bottom so that the cards are visible
+        margin: EdgeInsets.only(bottom: 37),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Container(
         height: 80.0,
@@ -96,8 +101,10 @@ class _SensorsState extends State {
       return ListView.builder(
         itemCount: count,
         itemBuilder: (BuildContext context, int position) {
-          List<Measurement> measurements = this.box.sensorBoxes[position].measurements;
-          Measurement measurement = measurements.last;
+          if (this.box.sensorBoxes[position].measurements.isNotEmpty) {
+            measurement = this.box.sensorBoxes[position].measurements.last;
+          }
+
           return Row(children: <Widget>[
             Flexible(
               child: Card(
@@ -109,26 +116,50 @@ class _SensorsState extends State {
                       children: <Widget>[
                         CircleAvatar(
                           backgroundColor: Theme.of(context).primaryColor,
-                          child: Text((position + 1)
-                              .toString()),
+                          child: Text((position + 1).toString()),
                         ),
                       ]),
                   title: Text(this.box.sensorBoxes[position].sensor.name),
                   subtitle: Column(
                     children: [
-                      Align(
-                          alignment: Alignment.centerLeft,
-                          child:
-                              Text(this.box.sensorBoxes[position].sensor.sensorType.name + ": " + measurement.value + " " + this.box.sensorBoxes[position].sensor.sensorType.unit)),
+                      if (this
+                          .box
+                          .sensorBoxes[position]
+                          .measurements
+                          .isNotEmpty)
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(this
+                                    .box
+                                    .sensorBoxes[position]
+                                    .sensor
+                                    .sensorType
+                                    .name +
+                                ": " +
+                                measurement.value +
+                                " " +
+                                this
+                                    .box
+                                    .sensorBoxes[position]
+                                    .sensor
+                                    .sensorType
+                                    .unit)),
+                      if (this.box.sensorBoxes[position].measurements.isEmpty)
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Geen meting")),
                     ],
                   ),
                   isThreeLine: true,
                   onTap: () {
-                    debugPrint("Tapped on myMapId: " +
-                        this.box.sensorBoxes[position].sensor.id.toString());
-                    print("Navigate to Sensors");
-                    _showGraphPage(
-                        this.box.sensorBoxes[position].sensor.id, token);
+                    if (this
+                        .box
+                        .sensorBoxes[position]
+                        .measurements
+                        .isNotEmpty) {
+                      _showGraphPage(
+                          this.box.sensorBoxes[position].sensor.id, token);
+                    }
                   },
                 ),
               ),

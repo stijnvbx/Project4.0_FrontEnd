@@ -53,7 +53,6 @@ class MonitoringApi {
       },
       body: jsonEncode(monitoring),
     );
-    print("statusCode: " + response.statusCode.toString());
   }
 
   // DELETE -> monitoring
