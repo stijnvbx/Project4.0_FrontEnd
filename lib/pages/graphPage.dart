@@ -496,16 +496,29 @@ class _GraphPage extends State {
                             ),
                           ),
                         if (dayValue != null && dayTime != null)
-                          Text(
-                            'Waarde om ' +
-                                dayTime.hour.toString() +
-                                ":" +
-                                dayTime.minute.toString() +
-                                " was $dayValue" +
-                                sensor.sensorType.unit,
-                            style: TextStyle(
-                                fontSize: 24.0, fontWeight: FontWeight.bold),
-                          ),
+                          if (dayTime.minute.toString().length == 1)
+                            Text(
+                              'Waarde om ' +
+                                  dayTime.hour.toString() +
+                                  ":0" +
+                                  dayTime.minute.toString() +
+                                  " was $dayValue" +
+                                  sensor.sensorType.unit,
+                              style: TextStyle(
+                                  fontSize: 24.0, fontWeight: FontWeight.bold),
+                            ),
+                        if (dayValue != null && dayTime != null)
+                          if (dayTime.minute.toString().length > 1)
+                            Text(
+                              'Waarde om ' +
+                                  dayTime.hour.toString() +
+                                  ":" +
+                                  dayTime.minute.toString() +
+                                  " was $dayValue" +
+                                  sensor.sensorType.unit,
+                              style: TextStyle(
+                                  fontSize: 24.0, fontWeight: FontWeight.bold),
+                            ),
                       ],
                     ),
                   ),
