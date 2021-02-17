@@ -189,7 +189,10 @@ class _HomePage extends State {
                       children: <Widget>[
                         CircleAvatar(
                           backgroundColor: Theme.of(context).primaryColor,
-                          child: Text((position + 1).toString()),
+                          child: Text(
+                            (position + 1).toString(),
+                            style: TextStyle(color: Colors.black),
+                          ),
                         ),
                       ]),
                   title: Text(this.boxList[position].box.name),

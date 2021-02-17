@@ -116,7 +116,8 @@ class _SensorsState extends State {
                       children: <Widget>[
                         CircleAvatar(
                           backgroundColor: Theme.of(context).primaryColor,
-                          child: Text((position + 1).toString()),
+                          child: Text((position + 1).toString(),
+                              style: TextStyle(color: Colors.black)),
                         ),
                       ]),
                   title: Text(this.box.sensorBoxes[position].sensor.name),
